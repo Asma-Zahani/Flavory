@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   title: "Flavory",
   description: "",
   icons: {
-    icon: "/icon.png",
+    icon: "/icon.svg",
   },
 };
 

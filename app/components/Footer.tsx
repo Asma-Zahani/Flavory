@@ -6,7 +6,7 @@ export default function Footer() {
       <footer className="relative w-full bg-beige bg-cover bg-center bg-no-repeat" style={{ backgroundImage: "url('/pattern-new.png')" }}>
         <div className='flex flex-col items-center justify-center py-12 sm:py-20 space-y-6 min-h-[400px]'>
           <div>
-            <img src="/logo.png" alt="Flavory Logo" className="h-20" />
+            <img src="/logo.svg" alt="Flavory Logo" className="h-20" />
           </div>
           <p className="text-center font-raleway text-lg font-normal text-[#595959] max-w-sm">
             Theme especially made for cooking experts, novices & all who enjoy sharing their recipes.

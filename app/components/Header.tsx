@@ -35,7 +35,7 @@ export default function Header() {
       <header className={`${showSticky ? 'fixed top-0 left-0 border-b border-grayLight' : 'relative'} bg-white w-full`}>
         <div className="mx-22">
           <div className={`${showSticky ? 'py-4' : 'py-10 sm:py-8 lg:border-b border-grayLight'} px-0 flex justify-between w-full`}>
-            <Image src="/logo.png" alt="Flavory Logo" width={200} height={51} priority />
+            <Image src="/logo.svg" alt="Flavory Logo" width={200} height={51} priority />
             <div className={`${showSticky ? 'hidden w-1250:flex' : 'hidden'}`}><NavElement /></div>
             <div className="hidden lg:flex items-center ml-6 mx-3">
               <form className="flex items-center">
