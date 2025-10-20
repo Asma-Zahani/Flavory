@@ -1,0 +1,44 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-raleway: "var(--font-raleway)";
+  --font-libre: "var(--font-libre)";
+  --font-dancing: "var(--font-dancing)";
+  --font-greatvibes: "var(--font-greatvibes)";
+  --font-fredoka: "var(--font-fredoka)";
+  --font-garamond: "var(--font-garamond)";
+  
+  --breakpoint-w-1250: 1250px;
+  --breakpoint-w-800: 800px;
+
+  --color-primary: #e35640;
+  --color-beige: #f9f6f6;
+  --color-gray: #595959;
+  --color-grayDark: #5e5e5e;
+  --color-grayLight: #dfdfdf;
+
+  --font-weight-600: 600;
+  --font-weight-500: 500;
+  --font-weight-400: 400;
+}
+
+body {
+  font-family: Raleway, sans-serif;
+}
+
+::selection {
+  background-color: #f1dedb;
+  color: #e35640;
+}
+  
+.scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #e35640 transparent;
+}
+ 
+html {
+  scrollbar-width: thin;
+  scrollbar-color: #e35640 transparent;
+}
