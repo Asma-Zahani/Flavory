@@ -1,17 +1,20 @@
 'use client'; 
 
-import { useParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import { Star } from 'lucide-react';
+import { useParams, useRouter } from 'next/navigation';
+import { useContext, useEffect, useState } from 'react';
+import { Pencil, Star } from 'lucide-react';
 import Image from 'next/image';
 import React from 'react';
 import { Recipe } from '@/types/recipe';
 import Sidebar from '../../Sidebar';
-import IngredientRow from './IngredientRow';
-import StepRow from './StepRow';
+import {IngredientRow, StepRow} from './IngredientAndStepRows';
 import RatingStars from './RatingStars';
+import { createEntity } from '@/services/EntitesService';
+import { UserContext } from '@/context/UserContext';
 
 export default function RecipeDetail () {
+    const {user} = useContext(UserContext);
+    const router = useRouter();
     const params = useParams<{ id: string }>();
     const id = params.id;
 
@@ -25,8 +28,6 @@ export default function RecipeDetail () {
         .then(data => setRecipe(data))
         .catch(err => console.error(err));
     }, [id]);
-
-    console.log(recipe);
     
     const [servings, setServings] = useState(1);
 
@@ -38,13 +39,63 @@ export default function RecipeDetail () {
         setServings(1);
         }
     };
+    
+    const [isFavorite, setIsFavorite] = useState(false);
+    const [isDisabled, setIsDisabled] = useState(false);
+
+    useEffect(() => {
+    if (user && recipe) {
+        const favoriteExists = user.favorites.some(
+            (fav: { id: number; }) => fav.id === recipe.id
+        );
+        setIsFavorite(favoriteExists);
+    }
+    }, [user, recipe]);
+    
+    
+    const toggleFavorite = async (e: React.MouseEvent) => {
+        e.preventDefault();
+        if (isDisabled) return;
+        if (!user) {
+            router.push('/login');
+            return;
+        }
+
+        setIsFavorite(!isFavorite);
+        setIsDisabled(true);
+
+        const res = await createEntity("favorite", {user_id: user?.id, recipe_id: recipe?.id});
+        const data = await res.json(); 
+
+        console.log(data);
+        
+        setTimeout(() => setIsDisabled(false), 500);
+    };
 
     if (!recipe) return <p>Loading...</p>;
 
     return (
         <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 py-12 sm:py-20">
             <div className='col-span-2 px-0 sm:px-6'> 
-                <p className='text-[45px] sm:text-[52px] font-500 leading-[1.08em] font-garamond mb-4'>{recipe.title}</p>
+                {/* <p className='text-[45px] sm:text-[52px] font-500 leading-[1.08em] font-garamond mb-4'>{recipe.title}</p> */}
+                <div className="flex items-center justify-between mb-4">
+                    <p className='text-[45px] sm:text-[52px] font-500 leading-[1.08em] font-garamond'>
+                        {recipe.title}
+                    </p>
+                    <div>
+                        {user && (user.id == recipe.author.id) &&
+                            <button onClick={() => { router.push(`/update-recipe/${recipe.id}`); }}>
+                                <Pencil className='text-[#686868] hover:text-primary mb-0.5 mr-3' />
+                            </button>
+                        }
+                        <button onClick={toggleFavorite} aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}>
+                            <svg xmlns="http://www.w3.org/2000/svg" fill={isFavorite ? "#e35640" : "#ffffff"} viewBox="0 0 24 24" strokeWidth={1.5} stroke={isFavorite ? "#e35640" : "#686868"} className="w-7 h-7 mr-2 mt-4 text-primary hover:stroke-primary">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.014-4.5-4.5-4.5S12 5.765 12 8.25 9.986 3.75 7.5 3.75 3 5.765 3 8.25c0 7.5 9 12 9 12s9-4.5 9-12z" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
                 <div className='flex'>
                     <div className='flex items-center pr-11 my-5'>
                         <Image src={`/users/${recipe.author.profile_photo ?? "user.jpg"}`} alt='' width={55} height={55} className='mr-6.5 rounded-full' priority />
@@ -152,40 +203,42 @@ export default function RecipeDetail () {
                         })} 
                     </div>
                 } 
-                <div className="bg-beige grid sm:grid-cols-3 my-10 sm:items-center">
-                    <h5 className="px-4 py-6 sm:py-12 sm:border-r border-grayLight text-center font-500 font-garamond text-2xl leading-[1.08em]">
-                        Nutritional Information
-                    </h5>
+                {(recipe.fat && recipe.protein && recipe.sugars && recipe.calories && recipe.carbs) && 
+                    <div className="bg-beige grid sm:grid-cols-3 my-10 sm:items-center">
+                        <h5 className="px-4 py-6 sm:py-12 sm:border-r border-grayLight text-center font-500 font-garamond text-2xl leading-[1.08em]">
+                            Nutritional Information
+                        </h5>
 
-                    <div className="sm:col-span-2 flex justify-center pb-6 sm:pb-0">
-                        <div className="grid grid-cols-2 sm:grid-cols-5 sm:w-full sm:max-w-4xl gap-y-6 gap-x-10 sm:gap-0">
-                        <div className="flex flex-col px-2.5 flex-1 items-center text-center justify-center">
-                            <span className="font-500 font-garamond text-xl mb-1">{recipe.fat}g</span>
-                            <span className="text-[15px] text-gray">Fat</span>
-                        </div>
+                        <div className="sm:col-span-2 flex justify-center pb-6 sm:pb-0">
+                            <div className="grid grid-cols-2 sm:grid-cols-5 sm:w-full sm:max-w-4xl gap-y-6 gap-x-10 sm:gap-0">
+                            <div className="flex flex-col px-2.5 flex-1 items-center text-center justify-center">
+                                <span className="font-500 font-garamond text-xl mb-1">{recipe.fat}g</span>
+                                <span className="text-[15px] text-gray">Fat</span>
+                            </div>
 
-                        <div className="flex flex-col px-2.5 flex-1 items-center text-center justify-center">
-                            <span className="font-500 font-garamond text-xl mb-1">{recipe.protein}g</span>
-                            <span className="text-[15px] text-gray">Protein</span>
-                        </div>
+                            <div className="flex flex-col px-2.5 flex-1 items-center text-center justify-center">
+                                <span className="font-500 font-garamond text-xl mb-1">{recipe.protein}g</span>
+                                <span className="text-[15px] text-gray">Protein</span>
+                            </div>
 
-                        <div className="flex flex-col px-2.5 flex-1 items-center text-center justify-center">
-                            <span className="font-500 font-garamond text-xl mb-1">{recipe.sugars}g</span>
-                            <span className="text-[15px] text-gray">Sugars</span>
-                        </div>
+                            <div className="flex flex-col px-2.5 flex-1 items-center text-center justify-center">
+                                <span className="font-500 font-garamond text-xl mb-1">{recipe.sugars}g</span>
+                                <span className="text-[15px] text-gray">Sugars</span>
+                            </div>
 
-                        <div className="flex flex-col px-2.5 flex-1 items-center text-center justify-center">
-                            <span className="font-500 font-garamond text-xl mb-1">{recipe.calories}</span>
-                            <span className="text-[15px] text-gray">Calories</span>
-                        </div>
+                            <div className="flex flex-col px-2.5 flex-1 items-center text-center justify-center">
+                                <span className="font-500 font-garamond text-xl mb-1">{recipe.calories}</span>
+                                <span className="text-[15px] text-gray">Calories</span>
+                            </div>
 
-                        <div className="flex flex-col px-2.5 flex-1 items-center text-center justify-center">
-                            <span className="font-500 font-garamond text-xl mb-1">{recipe.carbs}g</span>
-                            <span className="text-[15px] text-gray">Carbs</span>
-                        </div>
+                            <div className="flex flex-col px-2.5 flex-1 items-center text-center justify-center">
+                                <span className="font-500 font-garamond text-xl mb-1">{recipe.carbs}g</span>
+                                <span className="text-[15px] text-gray">Carbs</span>
+                            </div>
+                            </div>
                         </div>
                     </div>
-                </div>
+                }
                 {recipe.steps.length > 0 &&
                     <div>
                         <div className="flex flex-row items-center gap-6 after:content-[''] after:flex-1 after:border-t after:border-grayLight">

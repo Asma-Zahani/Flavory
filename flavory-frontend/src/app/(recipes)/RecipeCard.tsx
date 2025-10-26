@@ -2,6 +2,10 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { Recipe } from '@/types/recipe';
+import { useContext, useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { UserContext } from '@/context/UserContext';
+import { createEntity } from '@/services/EntitesService';
 
 interface RecipeCardProps {
     recipe: Recipe;
@@ -9,14 +13,57 @@ interface RecipeCardProps {
 }
 
 export default function RecipeCard({ recipe, information }: RecipeCardProps) {
+    const {user} = useContext(UserContext);
+    const router = useRouter();
+    
+    const [isFavorite, setIsFavorite] = useState(false);
+    const [isDisabled, setIsDisabled] = useState(false);
+
+    useEffect(() => {
+        if (user && recipe) {
+            const favoriteExists = user.favorites.some(
+                (fav: { id: number; }) => fav.id === recipe.id
+            );
+            setIsFavorite(favoriteExists);
+        }
+    }, [user, recipe]);
+
+    const toggleFavorite = async (e: React.MouseEvent) => {
+        e.preventDefault();
+        if (isDisabled) return;
+        if (!user) {
+            router.push('/login');
+            return;
+        }
+
+        setIsFavorite(!isFavorite);
+        setIsDisabled(true);
+
+        const res = await createEntity("favorite", {user_id: user?.id, recipe_id: recipe?.id});
+        const data = await res.json(); 
+
+        console.log(data);
+        
+        setTimeout(() => setIsDisabled(false), 500);
+    };
+
     return (
         <div>
             <Link href={`/recipes/${recipe.id}`} ><Image src={`/recipes/${recipe.image}`} alt={recipe.title} width={900} height={1000} priority /></Link>
             <div>
-                <Link href={`/recipe-category?category=${encodeURIComponent(recipe.category.toLowerCase())}`}>
-                    <p className="mt-4 leading-[1.6em] relative uppercase text-primary font-bold text-xs tracking-[0.3em] mr-1.5">{recipe.category}</p>
-                </Link>
-                <Link href={`/recipes/${recipe.id}`} className='text-2xl font-500 leading-[1.08em] font-garamond'>{recipe.title}</Link>
+                <div className='flex justify-between items-center'>
+                    <div>
+                        <Link href={`/recipe-category?category=${encodeURIComponent(recipe.category.toLowerCase())}`}>
+                            <p className="mt-4 leading-[1.6em] relative uppercase text-primary font-bold text-xs tracking-[0.3em] mr-1.5">{recipe.category}</p>
+                        </Link>
+                        <Link href={`/recipes/${recipe.id}`} className='text-2xl font-500 leading-[1.08em] font-garamond'>{recipe.title}</Link>
+                    </div> 
+                    <button onClick={toggleFavorite} aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill={isFavorite ? "#e35640" : "#ffffff"} viewBox="0 0 24 24" strokeWidth={1.5} stroke={isFavorite ? "#e35640" : "#686868"} className="w-5 h-5 mt-3 text-primary hover:stroke-primary">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.014-4.5-4.5-4.5S12 5.765 12 8.25 9.986 3.75 7.5 3.75 3 5.765 3 8.25c0 7.5 9 12 9 12s9-4.5 9-12z" />
+                        </svg>
+                    </button>
+                </div>
                 {information && <p className='mt-4 text-gray'>{recipe.description}</p>}
                 <div className='flex mt-4 py-4 border-t border-grayLight gap-6 uppercase text-xs text-gray'>
                     <p className='flex items-center gap-1'>

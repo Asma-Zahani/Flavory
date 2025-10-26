@@ -21,17 +21,18 @@ export interface Recipe {
   difficulty: string;
   numberPerson: number;
   recipe_ingredients: RecipeIngredient[];
-  fat: number;
-  protein: number;
-  sugars: number;
-  calories: number;
-  carbs: number;
+  fat: string;
+  protein: string;
+  sugars: string;
+  calories: string;
+  carbs: string;
   steps: Steps[];
-  author: Author;
+  author: User;
   created_at : string;
 }
 
-export interface Author {
+export interface User {
+  id: number;
   full_name: string;
   profile_photo: string;
 }

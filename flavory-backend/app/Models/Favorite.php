@@ -13,6 +13,9 @@ class Favorite extends Model
     protected $table = 'favorites';
     public $timestamps = false;
     
+    public $incrementing = false;
+    protected $primaryKey = ['user_id', 'recipe_id'];
+
     protected $fillable = ['user_id', 'recipe_id'];
 
     public function user()

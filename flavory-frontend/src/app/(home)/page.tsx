@@ -2,7 +2,7 @@
 
 import { Recipe } from "@/types/recipe";
 import { useEffect, useState } from "react";
-import RecipeCard from "./(recipes)/RecipeCard";
+import RecipeCard from "../(recipes)/RecipeCard";
 import Image from "next/image";
 import AOS from "aos";
 import "aos/dist/aos.css";

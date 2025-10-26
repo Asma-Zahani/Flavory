@@ -22,29 +22,17 @@ class IngredientController extends Controller implements HasMiddleware
         return response()->json(Ingredient::all(), 200);
     }
 
-    // public function store(Request $request)
-    // {
-    //     // Validation des données
-    //     $validatedData = $request->validate([
-    //         'image' => 'required|string|max:255',
-    //         'title' => 'required|string|max:255',
-    //         'description' => 'nullable|string',
-    //         'cookingTime' => 'nullable|string',
-    //         'difficulty' => 'nullable|string',
-    //         'numberPerson' => 'nullable|integer',
-    //         'calories' => 'nullable|numeric',
-    //         'fat' => 'nullable|numeric',
-    //         'protein' => 'nullable|numeric',
-    //         'sugars' => 'nullable|numeric',
-    //         'carbs' => 'nullable|numeric'
-    //     ]);
+    public function store(Request $request)
+    {
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+        ]);
 
-    //     // Création de la recette
-    //     $recipe = Recipe::create($validatedData);
+        $ingredient = Ingredient::create($validatedData);
 
-    //     return response()->json([
-    //         'message' => 'Recipe added successfully',
-    //         'data' => $recipe
-    //     ], 201);
-    // }
+        return response()->json([
+            'message' => 'Ingredient added successfully',
+            'data' => $ingredient
+        ], 201);
+    }
 }

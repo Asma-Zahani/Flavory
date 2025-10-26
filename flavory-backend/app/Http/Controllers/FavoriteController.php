@@ -3,49 +3,37 @@
 namespace App\Http\Controllers;
 
 use App\Models\Favorite;
-use App\Http\Requests\StoreFavoriteRequest;
-use App\Http\Requests\UpdateFavoriteRequest;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class FavoriteController extends Controller
+class FavoriteController extends Controller implements HasMiddleware
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public static function middleware()
     {
-        //
+        return [
+            new Middleware('auth:sanctum')
+        ];
     }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function storeOrUpdate(Request $request)
     {
-        //
-    }
+        $validatedData = $request->validate([
+            'user_id' => 'required|integer|exists:users,id',
+            'recipe_id' => 'required|integer|exists:recipes,id'
+        ]);
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Favorite $favorite)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Favorite $favorite)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Favorite $favorite)
-    {
-        //
+        $favorite = Favorite::where('user_id', $validatedData['user_id'])
+                        ->where('recipe_id', $validatedData['recipe_id'])
+                        ->first();
+                        
+        if ($favorite) {
+            Favorite::where('user_id', $validatedData['user_id'])
+                   ->where('recipe_id', $validatedData['recipe_id'])
+                   ->delete();
+            return response()->json(['message' => 'Favorite removed'], 200);
+        } else {
+            $newFavorite = Favorite::create($validatedData);
+            return response()->json(['message' => 'Favorite added'], 201);
+        }
     }
 }

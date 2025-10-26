@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('title');
             $table->text('description');
             $table->string('cookingTime');
-            $table->string('difficulty', DifficultyEnum::values());
+            $table->enum('difficulty', DifficultyEnum::values());
             $table->integer('numberPerson');
             $table->enum('category', CategoryEnum::values());
             $table->integer('calories')->nullable();

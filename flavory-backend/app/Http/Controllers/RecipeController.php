@@ -4,10 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Enums\CategoryEnum;
 use App\Enums\DifficultyEnum;
+use App\Enums\TypeRecipeIngredientEnum;
 use App\Models\Recipe;
+use App\Models\RecipeIngredient;
+use App\Models\Step;
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 
 class RecipeController extends Controller implements HasMiddleware
@@ -73,28 +78,76 @@ class RecipeController extends Controller implements HasMiddleware
 
     public function store(Request $request)
     {
-        // Validation des données
-        $validatedData = $request->validate([
-            'image' => 'required|string|max:255',
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'cookingTime' => 'nullable|string',
-            'difficulty' => [Rule::in(DifficultyEnum::values())],
-            'numberPerson' => 'nullable|integer',
-            'category' => [Rule::in(CategoryEnum::values())],
-            'calories' => 'nullable|numeric',
-            'fat' => 'nullable|numeric',
-            'protein' => 'nullable|numeric',
-            'sugars' => 'nullable|numeric',
-            'carbs' => 'nullable|numeric'
-        ]);
+        // if (!$request->hasFile('image')) {
+        //     return response()->json(['error' => 'No file received']);
+        // }
 
-        // Création de la recette
+        // $file = $request->file('image');
+        // $result = Cloudinary::upload($file->getRealPath());
+
+        // return response()->json([
+        //     'url' => $result->getSecurePath(),
+        // ]);
+
+        $validatedData = $request->validate([
+            'author_id' => 'required|integer|exists:users,id',
+            'title' => 'required|string|max:255',
+            'image' => 'required',
+            'category' => ['required', Rule::in(CategoryEnum::values())],
+            'difficulty' => ['required', Rule::in(DifficultyEnum::values())],
+            'cookingTime' => 'required|integer',
+            'numberPerson' => 'required|integer',
+            'description' => 'required|string',
+            'recipeIngredients' => ['array', 'required', 'min:1'],
+            'recipeIngredients.*.ingredient.id' => ['required', 'integer', 'exists:ingredients,id'],
+            'recipeIngredients.*.type' => ['required', Rule::in(TypeRecipeIngredientEnum::values())],
+            'recipeIngredients.*.quantity' => ['required', 'integer'],
+            'recipeIngredients.*.unit' => ['nullable', 'string'],
+            'calories' => 'nullable|integer',
+            'fat' => 'nullable|integer',
+            'protein' => 'nullable|integer',
+            'sugars' => 'nullable|integer',
+            'carbs' => 'nullable|integer',
+            'recipeSteps' => ['array', 'required', 'min:1'],
+            'recipeSteps.*.title' => ['required', 'string'],
+            'recipeSteps.*.step_number' => ['required', 'integer'],
+            'recipeSteps.*.instruction' => ['required', 'string'],
+            'recipeSteps.*.images' => ['array', 'nullable'],
+            'recipeSteps.*.images.*.image_path' => ['nullable', 'string'],
+        ]);
+        
         $recipe = Recipe::create($validatedData);
 
+        foreach ($validatedData['recipeIngredients'] as $ingredient) {
+            RecipeIngredient::create([
+                'recipe_id' => $recipe->id,
+                'ingredient_id' => $ingredient['ingredient']['id'],
+                'type' => $ingredient['type'],
+                'quantity' => $ingredient['quantity'],
+                'unit' => $ingredient['unit'] ?? null,
+            ]);
+        }
+
+        foreach ($validatedData['recipeSteps'] as $step) {
+            $stepModel = Step::create([
+                'recipe_id' => $recipe->id,
+                'step_number' => $step['step_number'],
+                'title' => $step['title'],
+                'instruction' => $step['instruction'],
+            ]);
+
+            if (!empty($step['images'])) {
+                foreach ($step['images'] as $img) {
+                    $stepModel->images()->create([
+                        'image_path' => $img['image_path'],
+                    ]);
+                }
+            }
+        }
+
+        
         return response()->json([
             'message' => 'Recipe added successfully',
-            'data' => $recipe
         ], 201);
     }
 
@@ -107,44 +160,86 @@ class RecipeController extends Controller implements HasMiddleware
         return response()->json($recipe);
     }
 
-
     public function update(Request $request, $id)
     {
-        // Récupérer la recette
         $recipe = Recipe::findOrFail($id);
 
-        // Validation des données
         $validatedData = $request->validate([
-            'image' => 'nullable|string|max:255',
-            'title' => 'nullable|string|max:255',
-            'description' => 'nullable|string',
-            'cookingTime' => 'nullable|string',
-            'difficulty' => 'nullable|string',
-            'numberPerson' => 'nullable|integer',
-            'category' => [Rule::in(CategoryEnum::values())],
-            'calories' => 'nullable|numeric',
-            'fat' => 'nullable|numeric',
-            'protein' => 'nullable|numeric',
-            'sugars' => 'nullable|numeric',
-            'carbs' => 'nullable|numeric'
+            'author_id' => 'required|integer|exists:users,id',
+            'title' => 'required|string|max:255',
+            'image' => 'required',
+            'category' => ['required', Rule::in(CategoryEnum::values())],
+            'difficulty' => ['required', Rule::in(DifficultyEnum::values())],
+            'cookingTime' => 'required|integer',
+            'numberPerson' => 'required|integer',
+            'description' => 'required|string',
+            'recipeIngredients' => ['array', 'required', 'min:1'],
+            'recipeIngredients.*.ingredient.id' => ['required', 'integer', 'exists:ingredients,id'],
+            'recipeIngredients.*.type' => ['required', Rule::in(TypeRecipeIngredientEnum::values())],
+            'recipeIngredients.*.quantity' => ['required', 'integer'],
+            'recipeIngredients.*.unit' => ['nullable', 'string'],
+            'calories' => 'nullable|integer',
+            'fat' => 'nullable|integer',
+            'protein' => 'nullable|integer',
+            'sugars' => 'nullable|integer',
+            'carbs' => 'nullable|integer',
+            'recipeSteps' => ['array', 'required', 'min:1'],
+            'recipeSteps.*.title' => ['required', 'string'],
+            'recipeSteps.*.step_number' => ['required', 'integer'],
+            'recipeSteps.*.instruction' => ['required', 'string'],
+            'recipeSteps.*.images' => ['array', 'nullable'],
+            'recipeSteps.*.images.*.image_path' => ['nullable', 'string'],
         ]);
 
-        // Mettre à jour la recette
         $recipe->update($validatedData);
 
-        // Retourner la réponse JSON
-        return response()->json([
-            'message' => 'Recipe updated successfully',
-            'data' => $recipe
-        ], 200);
+        DB::transaction(function() use ($recipe, $validatedData) {
+            foreach ($validatedData['recipeIngredients'] as $ingredient) {
+                RecipeIngredient::updateOrCreate(
+                    [
+                        'recipe_id' => $recipe->id,
+                        'ingredient_id' => $ingredient['ingredient']['id'],
+                    ],
+                    [
+                        'type' => $ingredient['type'],
+                        'quantity' => $ingredient['quantity'],
+                        'unit' => $ingredient['unit'] ?? null,
+                    ]
+                );
+            }
+            foreach ($validatedData['recipeSteps'] as $step) {
+                $stepModel = Step::updateOrCreate(
+                    [
+                        'recipe_id' => $recipe->id,
+                        'step_number' => $step['step_number'],
+                    ],
+                    [
+                        'title' => $step['title'],
+                        'instruction' => $step['instruction'],
+                    ]
+                );
+
+                if (!empty($step['images'])) {
+                    foreach ($step['images'] as $img) {
+                        $stepModel->images()->updateOrCreate(
+                            ['image_path' => $img['image_path']],
+                            ['image_path' => $img['image_path']]
+                        );
+                    }
+                }
+            }
+        });
+
+        return response()->json(['message' => 'Recipe updated successfully'], 200);
     }
+
 
     public function destroy($id)
     {
         Recipe::findOrFail($id)->delete();
 
         return response()->json([
-            'message' => 'Catégorie supprimée avec succès'
+            'message' => 'Recipe deleted successfully'
         ], 200);
     }
 }

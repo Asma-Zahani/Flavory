@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreignId('ingredient_id')->constrained('ingredients')->onDelete('restrict');
             $table->enum('type', TypeRecipeIngredientEnum::values())->default(TypeRecipeIngredientEnum::NORMAL);
             $table->float('quantity');
-            $table->string('unit');
+            $table->string('unit')->nullable();
         });
     }
 
