@@ -32,5 +32,6 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('steps');
+        Schema::dropIfExists('step_images');
     }
 };

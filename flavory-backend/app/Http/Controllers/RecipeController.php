@@ -78,21 +78,9 @@ class RecipeController extends Controller implements HasMiddleware
 
     public function store(Request $request)
     {
-        // if (!$request->hasFile('image')) {
-        //     return response()->json(['error' => 'No file received']);
-        // }
-
-        // $file = $request->file('image');
-        // $result = Cloudinary::upload($file->getRealPath());
-
-        // return response()->json([
-        //     'url' => $result->getSecurePath(),
-        // ]);
-
         $validatedData = $request->validate([
             'author_id' => 'required|integer|exists:users,id',
             'title' => 'required|string|max:255',
-            'image' => 'required',
             'category' => ['required', Rule::in(CategoryEnum::values())],
             'difficulty' => ['required', Rule::in(DifficultyEnum::values())],
             'cookingTime' => 'required|integer',
@@ -128,6 +116,8 @@ class RecipeController extends Controller implements HasMiddleware
             ]);
         }
 
+        $stepIds = [];
+
         foreach ($validatedData['recipeSteps'] as $step) {
             $stepModel = Step::create([
                 'recipe_id' => $recipe->id,
@@ -136,25 +126,21 @@ class RecipeController extends Controller implements HasMiddleware
                 'instruction' => $step['instruction'],
             ]);
 
-            if (!empty($step['images'])) {
-                foreach ($step['images'] as $img) {
-                    $stepModel->images()->create([
-                        'image_path' => $img['image_path'],
-                    ]);
-                }
-            }
+            $stepIds[] = $stepModel->id;
         }
 
         
         return response()->json([
             'message' => 'Recipe added successfully',
+            'recipe_id' => $recipe->id,
+            'step_ids' => $stepIds,
         ], 201);
     }
 
     public function show($id)
     {
         $recipe = Recipe::with([
-            'recipeIngredients.ingredient', 'steps.images', 'author'
+            'recipeIngredients.ingredient', 'steps.images', 'author', 'reviews.user', 'reviews.images'
         ])->findOrFail($id);
 
         return response()->json($recipe);
@@ -193,7 +179,9 @@ class RecipeController extends Controller implements HasMiddleware
 
         $recipe->update($validatedData);
 
-        DB::transaction(function() use ($recipe, $validatedData) {
+        $stepIds = [];
+
+        DB::transaction(function() use ($recipe, $validatedData, &$stepIds) {
             foreach ($validatedData['recipeIngredients'] as $ingredient) {
                 RecipeIngredient::updateOrCreate(
                     [
@@ -219,18 +207,15 @@ class RecipeController extends Controller implements HasMiddleware
                     ]
                 );
 
-                if (!empty($step['images'])) {
-                    foreach ($step['images'] as $img) {
-                        $stepModel->images()->updateOrCreate(
-                            ['image_path' => $img['image_path']],
-                            ['image_path' => $img['image_path']]
-                        );
-                    }
-                }
+                $stepIds[] = $stepModel->id;
             }
         });
 
-        return response()->json(['message' => 'Recipe updated successfully'], 200);
+        return response()->json([
+            'message' => 'Recipe updated successfully',
+            'recipe_id' => $recipe->id,
+            'step_ids' => $stepIds,
+        ], 200);
     }
 
 

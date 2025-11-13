@@ -13,7 +13,17 @@ return new class extends Migration
     {
         Schema::create('reviews', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained('users', 'id')->onDelete('cascade');
+            $table->foreignId('recipe_id')->constrained('recipes', 'id')->onDelete('cascade');
+            $table->integer('rating');
+            $table->text('comment')->nullable();
             $table->timestamps();
+        });
+
+        Schema::create('review_images', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('review_id')->constrained('reviews')->onDelete('cascade');
+            $table->string('image_path');
         });
     }
 
@@ -23,5 +33,6 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('reviews');
+        Schema::dropIfExists('review_images');
     }
 };

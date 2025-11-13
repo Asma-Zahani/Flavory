@@ -1,19 +1,13 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect } from "react";
-import AOS from "aos";
-import "aos/dist/aos.css";
 
 export default function AboutPage() {
-    useEffect(() => {
-        AOS.init({ duration: 800, once: true, easing: "ease-in-out" });
-    }, []);
 
     return (
         <div className="py-12 sm:py-20 flex flex-col">
             <div>
-                <h1 data-aos="fade-down" className="font-garamond font-500 text-[52px] leading-[1.2em] italic max-w-[80%] mb-10">Hello, It&apos;s Flavory. Welcome to recipes blog and food heaven!</h1>
+                <h1 data-aos="fade-down" data-aos-duration="580" data-aos-once="true" className="font-garamond font-500 text-[52px] leading-[1.2em] italic max-w-[80%] mb-10">Hello, It&apos;s Flavory. Welcome to recipes blog and food heaven!</h1>
                 <Image src="/about-img.jpg" alt="" width={1500} height={366} priority />
                 <div data-aos="fade-up" data-aos-delay="100" className="text-gray my-6 text-lg leading-relaxed space-y-6">
                     <p>Welcome to <span className="font-semibold">Flavory</span>, your ultimate destination for discovering and sharing the authentic taste of Tunisia! We’re a vibrant community of food lovers, home cooks, and professional chefs passionate about celebrating the richness of Tunisian cuisine and culture.</p>

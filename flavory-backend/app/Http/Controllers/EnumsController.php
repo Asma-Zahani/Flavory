@@ -4,9 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Enums\CategoryEnum;
 use App\Enums\DifficultyEnum;
-use App\Enums\EtatCommandeEnum;
-use App\Enums\StatusDriveEnum;
-use App\Enums\StatusProduitEnum;
 use App\Enums\TypeRecipeIngredientEnum;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;

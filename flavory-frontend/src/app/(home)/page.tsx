@@ -47,7 +47,7 @@ export default function HomePage() {
         <h2 className="font-dancing font-400 text-primary text-[40px] mb-6">Start using your kitchen</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {recipes.length > 0 && recipes.map((recipe) => (
-            <RecipeCard key={recipe.id} recipe={recipe} information={false} /> 
+            <RecipeCard key={recipe.id} recipe={recipe} information={false} favorite={false} /> 
           ))}
         </div>
       </div>

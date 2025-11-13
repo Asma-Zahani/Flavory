@@ -35,7 +35,7 @@ class AuthController extends Controller
 
         Mail::to($user->email)->send(new VerifyEmail($user, $token));
 
-        return response()->json(['message' => "Compte créé. Veuillez vérifier votre email."], 201);  
+        return response()->json(['message' => "Compte créé. Veuillez vérifier votre email.", 'user_id' => $user->id], 201);  
     }
 
     public function login(Request $request)

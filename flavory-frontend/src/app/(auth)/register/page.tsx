@@ -1,5 +1,7 @@
 "use client";
+import FileInput from "@/app/components/FileInput";
 import { SuccessMessageContext } from "@/context/SuccessMessageContext";
+import { createEntity } from "@/services/EntitesService";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useContext, useEffect, useState } from "react";
@@ -9,7 +11,7 @@ export default function RegisterPage() {
   
   const [inputType, setInputType] = useState("password");
   const [inputType1, setInputType1] = useState("password");
-  const [formData, setFormData] = useState({ first_name: "", last_name: "", email: "", password: "", password_confirmation: ""});
+  const [formData, setFormData] = useState({ first_name: "", last_name: "", email: "", password: "", password_confirmation: "", images: [] as File[]});
   const [error, setError] = useState("");
   const { setSuccessMessage } = useContext(SuccessMessageContext);
   const [loading, setLoading] = useState(false);
@@ -30,29 +32,34 @@ export default function RegisterPage() {
     setError("");
     setLoading(true);
 
-    try {
-      const res = await fetch("/api/register", {
-        method: "POST",
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
+    const res = await createEntity("register", formData);
+    const data = await res.json(); 
 
-      const data = await res.json();
+    console.log(data);
+    
+    const userId = data.user_id;
+    
+    if (formData.images.length > 0) {
+        const uploadPromises = formData.images.map(async (file) => {
+            const fd = new FormData();
+            fd.append("file", file);
+            fd.append("type", "user");
+            fd.append("user_id", userId.toString());
 
-      if (res.ok) {
-        setSuccessMessage(data.message);
-        router.push('/login');
-      } else {
-        setError(data.message || "Register failed");
-      }
-    } catch (err) {
-      setError("Something went wrong");
-      console.error(err);
-    } finally {
-      setLoading(false);
+            await fetch("/api/upload", { method: "POST", body: fd });
+        });
+
+        const uploadedUrls = await Promise.all(uploadPromises);
+
+        console.log("Uploaded URLs:", uploadedUrls);
+    }
+
+    setLoading(false);
+    if (res.ok) {
+      setSuccessMessage(data.message);
+      router.push('/login');
+    } else {
+      setError(data.message || "Register failed");
     }
   };
 
@@ -77,6 +84,10 @@ export default function RegisterPage() {
           <label className="font-raleway font-400 text-gray text-[15px] leading-[1.6em]">Email address *</label>
           <input name="email" type="text" value={formData.email} onChange={handleChange} className="relative inline-block w-full mt-2 mb-5 px-5 py-3 text-[15px] leading-[23px] font-400 border border-gray outline-0 cursor-pointer transition-colors duration-200 ease-out focus:border-black"/>
         </p>
+        <div>
+          <label className="font-raleway font-400 text-gray text-[15px] leading-[1.6em]">Profile Photo</label>
+          <div className="mt-2"><FileInput defaultImages={[]} onChange={(files) => setFormData(prev => ({ ...prev, images: files }))}/></div>
+        </div>
         <div>
           <label className="font-raleway font-400 text-gray text-[15px] leading-[1.6em]">Password *</label>
           <div className="relative">

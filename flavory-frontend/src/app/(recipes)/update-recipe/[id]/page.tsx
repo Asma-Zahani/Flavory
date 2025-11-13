@@ -8,9 +8,7 @@ import { UserContext } from "@/context/UserContext";
 import { SuccessMessageContext } from "@/context/SuccessMessageContext";
 import { useParams, useRouter } from "next/navigation";
 import RecipeForm from "../../RecipeForm";
-import { AlertCircle, X } from "lucide-react";
-import AOS from "aos";
-import "aos/dist/aos.css";
+import Popup from "@/app/components/Popup";
 
 export default function UpdateRecipePage () {
     const { user } = useContext(UserContext);
@@ -18,8 +16,10 @@ export default function UpdateRecipePage () {
     const params = useParams();
     const recipeId = params.id;    
     const { setSuccessMessage } = useContext(SuccessMessageContext);
+    const [loading, setLoading] = useState(false);
+    const [load, setLoaded] = useState(false);
 
-    const [formData, setFormData] = useState({author_id: user?.id, title: "", image: "", description: "", category: "", cookingTime: "", difficulty: "",
+    const [formData, setFormData] = useState({author_id: user && user.id, title: "", image: [] as File[], description: "", category: "", cookingTime: "", difficulty: "",
         numberPerson: "", fat: "", protein: "", sugars: "", calories: "", carbs: "" });
     
     const [recipeIngredients, setRecipeIngredients] = useState<RecipeIngredient[]>([]);
@@ -37,6 +37,7 @@ export default function UpdateRecipePage () {
                 setFormData(rest);
                 setRecipeIngredients(recipe_ingredients || []);
                 setRecipeSteps(steps || []);
+                setLoaded(true);
             };
             
         };
@@ -63,6 +64,7 @@ export default function UpdateRecipePage () {
 
     const handleUpdate = async (e: React.FormEvent) => {
         e.preventDefault();
+        setLoading(true);
 
         const formattedFormData = {
             ...formData,
@@ -79,11 +81,48 @@ export default function UpdateRecipePage () {
             ...ri,
             quantity: parseInt(ri.quantity as any) || 0,
         }));
-
-        console.log({...formattedFormData,recipeIngredients,recipeSteps});
         
         const res = await updateEntity("recipes", recipeId, {...formattedFormData,recipeIngredients: formattedRecipeIngredients,recipeSteps});
-        const data = await res.json(); 
+        const data = await res.json();
+        
+        console.log(data);
+        
+        if (formData.image) {
+            const fd = new FormData();
+            fd.append("file", formData.image[0]);
+            fd.append("type", "recipe");
+            fd.append("recipe_id", data.recipe_id.toString());
+
+            await fetch("/api/upload", { method: "POST", body: fd });
+        }
+
+        const recipeStepsWithIds = recipeSteps.map((step, index) => ({
+            ...step,
+            step_id: data.step_ids[index],
+        }));
+
+        console.log(recipeStepsWithIds);
+        
+        for (const step of recipeStepsWithIds) {            
+            if (step.images.length > 0) {
+                const uploadPromises = step.images.map(async (img, index) => {
+                    const fd = new FormData();
+                    if (img.file) {
+                        fd.append("file", img.file);
+                    }
+                    fd.append("type", "step");
+                    fd.append("index", (index + 1).toString());
+                    fd.append("step_id", step.step_id ? step.step_id.toString() : step.id.toString());
+                    fd.append("recipe_id", data.recipe_id.toString());
+                    
+                    await fetch("/api/upload", { method: "POST", body: fd });
+                });
+
+                await Promise.all(uploadPromises);
+            }
+        }
+
+        setLoading(false);
         if (res.ok) {
             setSuccessMessage(data.message);
             router.push('/recipes'); 
@@ -100,54 +139,27 @@ export default function UpdateRecipePage () {
             router.push('/recipes');
         }   
     };
-    
-    useEffect(() => {
-        AOS.init({
-            easing: "ease-in-sine",
-        });
-    }, []);
 
     return (
         <div className='py-12 sm:py-20'>
-            <h1 className='mb-14 font-500 font-garamond text-[52px] leading-[1.19em]'>Update Recipe</h1>
-            <div className="w-full lg:w-[70%]">
-                <RecipeForm formData={formData} setFormData={setFormData} recipeIngredients={recipeIngredients} setRecipeIngredients={setRecipeIngredients} recipeSteps={recipeSteps} setRecipeSteps={setRecipeSteps} />
-                
-                <div className="flex gap-3">
-                    <button onClick={handleUpdate} type="submit" className="relative inline-flex items-center font-raleway text-xs font-600 tracking-wider uppercase rounded-none outline-none transition-colors duration-200 ease-out px-14.5 py-4.5 cursor-pointer z-30 text-white bg-primary hover:scale-105 hover:font-bold">
-                        Update Recipe
-                    </button>
-                    <button onClick={() => setIsDelete(true)} type="submit" className="relative inline-flex items-center font-raleway text-xs font-600 tracking-wider uppercase rounded-none outline-none transition-colors duration-200 ease-out px-14.5 py-4.5 cursor-pointer z-30 text-primary bg-transparent border border-primary hover:border-2 hover:scale-105 hover:font-bold">
-                        Delete Recipe
-                    </button>
-                    {isDelete && 
-                        <div className={`fixed z-50 w-full h-full inset-0 flex items-center justify-center`}>
-                            <div className={`fixed inset-0 bg-white/75 transition-opacity`} aria-hidden="true"></div>
-                                <div className="relative p-4 w-full max-w-md max-h-full" data-aos="fade-down" data-aos-duration="500" data-aos-once="true">
-                                    <div className="relative bg-white shadow-[0px_0px_6px_0px] shadow-gray-200">
-                                    <button onClick={() => setIsDelete(false)} type="button" className="absolute top-3 end-2.5 text-gray hover:text-primary rounded-md w-8 h-8 inline-flex justify-center items-center hover:scale-110">
-                                        <X size={20} />
-                                    </button>
-                                    <div className="p-4 md:p-5 text-center">
-                                        <AlertCircle className="mx-auto mb-4 text-gray" size={56} />
-                                        <h3 className="mb-5 text-lg max-w-[80%] text-gray dark:text-gray-200 break-words text-wrap mx-auto whitespace-pre-wrap">
-                                            Are you sure you want to delete this recipe?
-                                        </h3>
-                                        <div className="flex items-center rounded-b dark:border-gray-600 justify-center gap-3">
-                                        <button onClick={handleDelete} type="submit" className="relative inline-flex items-center font-raleway text-xs font-600 tracking-wider uppercase rounded-none outline-none transition-colors duration-200 ease-out px-10.5 py-3.5 cursor-pointer z-30 text-white bg-primary hover:scale-105 hover:font-bold">
-                                            Yes, I&apos;m sure
-                                        </button>
-                                        <button onClick={() => setIsDelete(false)} type="submit" className="relative inline-flex items-center font-raleway text-xs font-600 tracking-wider uppercase rounded-none outline-none transition-colors duration-200 ease-out px-10.5 py-3.5 cursor-pointer z-30 text-primary bg-transparent border border-primary hover:border-2 hover:scale-105 hover:font-bold">
-                                            No, cancel
-                                        </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    }
+            {load &&
+            <>
+                <h1 className='mb-14 font-500 font-garamond text-[52px] leading-[1.19em]'>Update Recipe</h1>
+                <div className="w-full lg:w-[70%]">
+                    <RecipeForm formData={formData} setFormData={setFormData} recipeIngredients={recipeIngredients} setRecipeIngredients={setRecipeIngredients} recipeSteps={recipeSteps} setRecipeSteps={setRecipeSteps} />
+                    
+                    <div className="flex gap-3">
+                        <button onClick={handleUpdate} disabled={loading} type="submit" className="relative inline-flex items-center font-raleway text-xs font-600 tracking-wider uppercase rounded-none outline-none transition-colors duration-200 ease-out px-14.5 py-4.5 cursor-pointer z-30 text-white bg-primary hover:scale-105 hover:font-bold">
+                            {loading ? "Updating..." : "Update Recipe"}
+                        </button>
+                        <button onClick={() => setIsDelete(true)} type="submit" className="relative inline-flex items-center font-raleway text-xs font-600 tracking-wider uppercase rounded-none outline-none transition-colors duration-200 ease-out px-14.5 py-4.5 cursor-pointer z-30 text-primary bg-transparent border border-primary hover:border-2 hover:scale-105 hover:font-bold">
+                            Delete Recipe
+                        </button>
+                        {isDelete && <Popup handleDelete={handleDelete} />}
+                    </div>
                 </div>
-            </div>
+            </>
+            }
         </div>  
     );
 };

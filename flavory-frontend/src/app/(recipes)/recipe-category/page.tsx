@@ -28,7 +28,7 @@ export default function RecipeCategoryPage () {
                 <div className='col-span-2 px-0 sm:px-6'>
                     <div className='grid grid-cols-1 sm:grid-cols-2 gap-8'>
                         {recipes.length > 0 && recipes.map((recipe) => (
-                        <RecipeCard key={recipe.id} recipe={recipe} information={true} /> 
+                        <RecipeCard key={recipe.id} recipe={recipe} information={true} favorite={false} /> 
                         ))}
                     </div>
                 </div>

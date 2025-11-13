@@ -1,21 +1,32 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import { Enums, Ingredient, RecipeIngredient, Steps } from "@/types/recipe";
-import { ChevronDownIcon, Plus, Trash2, UploadCloudIcon, X } from "lucide-react";
-import { DragEvent, useContext, useEffect, useRef, useState } from "react";
+import { ChevronDownIcon, Plus, Trash2 } from "lucide-react";
+import { useContext, useEffect, useRef, useState } from "react";
 import {createEntity} from "@/services/EntitesService"
 import { SuccessMessageContext } from "@/context/SuccessMessageContext";
+import FileInput from "../components/FileInput";
 
-interface RecipeFormProps {formData: {author_id?: number, title: string, image: string, description: string, category: string, cookingTime: string, difficulty: string, numberPerson: string, fat: string, protein: string, sugars: string, calories: string, carbs: string }; setFormData: React.Dispatch<React.SetStateAction<any>>; recipeIngredients: RecipeIngredient[]; setRecipeIngredients: React.Dispatch<React.SetStateAction<RecipeIngredient[]>>; recipeSteps: Steps[]; setRecipeSteps: React.Dispatch<React.SetStateAction<Steps[]>>;}
-interface FileInputProps {multiple?: boolean; defaultImages?: string | string[]; onChange: (urls: string | string[]) => void;}
+interface RecipeFormProps {formData: {author_id?: number, title: string, image: File[], description: string, category: string, cookingTime: string, difficulty: string, numberPerson: string, fat: string, protein: string, sugars: string, calories: string, carbs: string }; setFormData: React.Dispatch<React.SetStateAction<any>>; recipeIngredients: RecipeIngredient[]; setRecipeIngredients: React.Dispatch<React.SetStateAction<RecipeIngredient[]>>; recipeSteps: Steps[]; setRecipeSteps: React.Dispatch<React.SetStateAction<Steps[]>>;}
 interface DropdownInputProps {label?: string; name: string; value: string; placeholder?: string; options: { value: string; label: string }[]; onChange: (value: string) => void; onAdd?: (newName: string) => Promise<void>; width?: string;}
 
 export default function RecipeForm ({formData, setFormData, recipeIngredients, setRecipeIngredients, recipeSteps, setRecipeSteps}: RecipeFormProps) {
     const [ingredients, setIngredients] = useState<Ingredient[]>([]);
+    
+    const [previewImages, setPreviewImages] = useState<string[]>([`${process.env.NEXT_PUBLIC_BACKEND_URL}${formData.image}`]);
+    const [previewStepImages, setPreviewStepImages] = useState<string[][]>(
+        recipeSteps.map(step =>
+            step.images?.map(img =>
+            img.image_path.startsWith("http")
+                ? img.image_path
+                : `${process.env.NEXT_PUBLIC_BACKEND_URL}${img.image_path}`
+            ) || []
+        )
+    );
     const [data, setData] = useState<Enums>();
     const { setSuccessMessage } = useContext(SuccessMessageContext);
+    
     
     useEffect(() => {
         fetch(`/api/ingredients`).then(res => res.json()).then(data => setIngredients(data)).catch(err => console.error(err));
@@ -42,7 +53,7 @@ export default function RecipeForm ({formData, setFormData, recipeIngredients, s
     return (
         <>
             <input name="title" type="text" placeholder="Title*" value={formData.title} onChange={handleChange} className='w-full mb-5 px-5 py-3 text-base placeholder:text-gray focus:text-black border border-grayDark rounded-none outline-none focus:border-black transition-colors duration-200 ease-out resize-none '/>
-            <FileInput multiple={false} defaultImages={formData.image || ""} onChange={(url) => setFormData({ ...formData, image: url as string })}/>
+            <FileInput multiple={false} previewImages={previewImages} setPreviewImages={setPreviewImages} onChange={(file) => setFormData((prev: any) => ({ ...prev, image: file }))}/>
 
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-3">
                 <DropdownInput name="category" placeholder="Category*" value={formData.category}
@@ -88,7 +99,7 @@ export default function RecipeForm ({formData, setFormData, recipeIngredients, s
                                         i === index ? { ...ing, quantity: Number(e.target.value) } : ing
                                     ))
                                 }/>
-                                <input name="unit" placeholder="Unit" value={ri.unit} className='w-full lg:w-30 px-5 py-3 text-base placeholder:text-gray focus:text-black border border-grayDark rounded-none outline-none focus:border-black transition-colors duration-200 ease-out resize-none '
+                                <input name="unit" placeholder="Unit" value={ri.unit ?? ""} className='w-full lg:w-30 px-5 py-3 text-base placeholder:text-gray focus:text-black border border-grayDark rounded-none outline-none focus:border-black transition-colors duration-200 ease-out resize-none '
                                     onChange={(e) => setRecipeIngredients((prev) => prev.map((ing, i) =>
                                         i === index ? { ...ing, unit: e.target.value } : ing
                                     ))
@@ -112,38 +123,15 @@ export default function RecipeForm ({formData, setFormData, recipeIngredients, s
                 <h2 className="text-lg font-semibold mb-3">Steps</h2>
 
                 {recipeSteps.map((step, index) => (
-                    <div key={index} className="flex flex-col mb-3 pb-3 border-b border-grayLight">
-                        <input name={`steps[${index}].title`} type="text" placeholder="Title*" value={step.title} 
-                            onChange={(e) => {
-                                const updated = [...recipeSteps];
-                                updated[index].title = e.target.value;
-                                setRecipeSteps(updated);
-                            }}
-                            className='w-full scrollbar mb-5 px-5 py-3 text-base placeholder:text-gray focus:text-black border border-grayDark rounded-none outline-none focus:border-black transition-colors duration-200 ease-out resize-none '/>
-                        <textarea name="instruction" placeholder="Instruction*" value={step.instruction} 
-                            onChange={(e) => {
-                                const updated = [...recipeSteps];
-                                updated[index].instruction = e.target.value;
-                                setRecipeSteps(updated);
-                            }}
-                            className='w-full h-33 mb-2 px-5 py-3 text-base placeholder:text-gray focus:text-black border border-grayDark rounded-none outline-none focus:border-black transition-colors duration-200 ease-out resize-none'/>
-                        <p className="text-gray text-sm mb-2">
-                            Please insert <strong>[IMAGES]</strong> when you want to add photos for this step.
-                        </p>
-                        <FileInput multiple defaultImages={step.images?.map((img) => img.image_path) || []}
-                            onChange={(urls) => {
-                                const updated = [...recipeSteps];
-                                updated[index].images = Array.isArray(urls)
-                                ? urls.map((url, idx) => ({
-                                    id: Date.now() + idx,
-                                    image_path: url,
-                                    step_id: step.id,
-                                    }))
-                                : [];
-                                setRecipeSteps(updated);
-                            }}/>
-                        <Trash2 strokeWidth={1} onClick={() => setRecipeSteps((prev) => prev.filter((_, i) => i !== index))} className="w-5 h-5 text-primary cursor-pointer" />
-                    </div>
+                    <RecipeStep key={index} index={index} step={step} recipeSteps={recipeSteps} setRecipeSteps={setRecipeSteps} previewStepImages={previewStepImages[index] || []} 
+                        setPreviewStepImages={(urls: string[]) => {
+                            setPreviewStepImages(prev => {
+                                const updated = [...prev];
+                                updated[index] = urls;
+                                return updated;
+                            });
+                        }}
+                    />
                 ))}
 
                 <button type="button" onClick={handleAddStep} className="text-primary text-sm underline mb-3">
@@ -154,73 +142,40 @@ export default function RecipeForm ({formData, setFormData, recipeIngredients, s
     );
 };
 
-export function FileInput({multiple = false, defaultImages = "", onChange}: FileInputProps) {
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const [previewImages, setPreviewImages] = useState<string[]>(typeof defaultImages === "string" ? defaultImages ? [defaultImages] : [] : defaultImages);
-
-  const handleFileSelect = (files: FileList) => {
-    if (!files || files.length === 0) return;
-
-    const urls = Array.from(files).map((file) => URL.createObjectURL(file));
-    previewImages.forEach((url) => URL.revokeObjectURL(url));
-
-    setPreviewImages((prev) =>
-      multiple ? [...prev, ...urls] : [urls[0]]
+export function RecipeStep({index, step, recipeSteps, setRecipeSteps, previewStepImages, setPreviewStepImages}: {index: number, step: Steps; recipeSteps: Steps[]; setRecipeSteps: React.Dispatch<React.SetStateAction<Steps[]>>; previewStepImages: string[]; setPreviewStepImages: (urls: string[]) => void;}) {
+    return (
+        <div className="flex flex-col mb-3 pb-3 border-b border-grayLight">
+            <input name={`steps[${index}].title`} type="text" placeholder="Title*" value={step.title} 
+                onChange={(e) => {
+                    const updated = [...recipeSteps];
+                    updated[index].title = e.target.value;
+                    setRecipeSteps(updated);
+                }}
+                className='w-full scrollbar mb-5 px-5 py-3 text-base placeholder:text-gray focus:text-black border border-grayDark rounded-none outline-none focus:border-black transition-colors duration-200 ease-out resize-none '/>
+            <textarea name="instruction" placeholder="Instruction*" value={step.instruction} 
+                onChange={(e) => {
+                    const updated = [...recipeSteps];
+                    updated[index].instruction = e.target.value;
+                    setRecipeSteps(updated);
+                }}
+                className='w-full h-33 mb-2 px-5 py-3 text-base placeholder:text-gray focus:text-black border border-grayDark rounded-none outline-none focus:border-black transition-colors duration-200 ease-out resize-none'/>
+            <p className="text-gray text-sm mb-2">
+                Please insert <strong>[IMAGES]</strong> when you want to add photos for this step.
+            </p>
+            <FileInput multiple previewImages={previewStepImages} setPreviewImages={setPreviewStepImages} 
+                onChange={(files: File[]) => {
+                    setRecipeSteps((prevSteps) => {
+                    const updated = [...prevSteps];
+                    updated[index].images = files.map((file) => ({
+                        file,
+                        image_path: URL.createObjectURL(file)
+                    }));
+                    return updated;
+                    });
+                }} />
+            <Trash2 strokeWidth={1} onClick={() => setRecipeSteps((prev) => prev.filter((_, i) => i !== index))} className="w-5 h-5 text-primary cursor-pointer" />
+        </div>
     );
-    
-    onChange(multiple ? [...previewImages, ...urls] : urls[0]);
-  };
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) handleFileSelect(e.target.files);
-  };
-
-  const handleClick = () => {
-    fileInputRef.current?.click();
-  };
-
-  const handleRemove = (index: number) => {
-    const updated = previewImages.filter((_, i) => i !== index);
-    setPreviewImages(updated);
-    onChange(multiple ? updated : "");
-  };
-
-    const handleDrop = (e: DragEvent<HTMLDivElement>) => {
-        e.preventDefault();
-        e.stopPropagation();
-        if (e.dataTransfer.files) handleFileSelect(e.dataTransfer.files);
-    };
-
-  return (
-    <div onClick={handleClick} onDragOver={(e) => e.preventDefault()} onDrop={handleDrop} className="relative flex flex-col items-center justify-center border-2 border-dashed border-gray cursor-pointer mb-5">
-      <input ref={fileInputRef} type="file" accept="image/*" multiple={multiple} onChange={handleInputChange} className="hidden"/>
-
-      {previewImages.length === 0 ? (
-        <div className="flex flex-col items-center justify-center text-gray py-3">
-            <div className="flex flex-row gap-3">
-                <UploadCloudIcon />
-                <p><span className="font-semibold">Click to upload</span> or drag & drop</p>
-            </div>
-            <p className="text-xs text-gray-400">PNG, JPG, GIF</p>
-        </div>
-      ) : (
-        <div className="grid grid-cols-3 gap-3 p-2 w-full justify-center">
-            {previewImages.map((src, index) => (
-                <div key={index} className="relative group">
-                    <img src={src} alt="Preview" className={`object-cover w-full h-full ${multiple ? "" : "flex items-center"}`} />
-                    <button type="button" className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1"
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            handleRemove(index);
-                        }}>
-                        <X className="w-3 h-3" />
-                    </button>
-                </div>
-            ))}
-        </div>
-      )}
-    </div>
-  );
 }
 
 export function DropdownInput({name, value, placeholder, options, onChange, onAdd, width = "w-full"}: DropdownInputProps) {

@@ -29,6 +29,19 @@ export interface Recipe {
   steps: Steps[];
   author: User;
   created_at : string;
+  review: { average: number, count: number};
+  reviews: Review[];
+}
+
+export interface Review {
+  id: number;
+  user: User;
+  rating: number;
+  comment: string;
+  created_at: string;
+  images: Images[];
+  recipe_id?: number;
+  user_id?: number;
 }
 
 export interface User {
@@ -46,9 +59,8 @@ export interface Steps {
 }
 
 export interface Images {
-  id: number;
+  file?: File;
   image_path: string;
-  step_id: number;
 }
 
 export interface Enums {

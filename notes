@@ -1,24 +1,5 @@
-unit dans ingredient et non dans recipe_ingredient
 recipe ingredient clé primaire composé ( recipe_id, ingredient_id, type)
-
-⚙️ Fonctionnalités du site :
-- Les utilisateurs peuvent créer un compte et se connecter. ✅
-- Ils peuvent voir les recettes avec les ingrédients et les étapes. ✅
-- Ils peuvent chercher une recette par nom, ingrédient ou filtrer par catégorie. ✅
-- Ils peuvent ajouter une recette avec une photo et une description. ✅
-- Ils peuvent commenter une recette. 
-- Ils peuvent tester une recette et noter (par étoiles) et ajouter leurs propres photos dans leur avis.
-- Ils peuvent mettre une recette en favori. ✅
-- Ils peuvent modifier ou supprimer leurs recettes. ✅ //si il y a un possibilité de rendre sauf le user dans le backend
-- L’administrateur peut gérer les utilisateurs et supprimer les recettes ou commentaires inappropriés.
-
-- Authentification (inscription/connexion)
-- Affichage des recettes avec les ingrédients et les étapes
-- Ajout/modification/suppression de recettes
-- Recherche et filtrage
-- Commentaires et likes
-- Profil utilisateur
-
+supprimer et modifier review
 
 flavory/
 ├── public/                     # Images, favicon, etc.
@@ -106,3 +87,15 @@ flavory/
 ├── tsconfig.json
 ├── next.config.mjs
 └── package.json
+
+⚙️ Fonctionnalités du site :
+- Les utilisateurs peuvent créer un compte et se connecter. ✅
+- Ils peuvent voir les recettes avec les ingrédients et les étapes. ✅
+- Ils peuvent chercher une recette par nom, ingrédient ou filtrer par catégorie. ✅
+- Ils peuvent ajouter une recette avec une photo et une description. ✅
+- Ils peuvent tester une recette et noter (par étoiles) et ajouter leurs propres photos dans leur avis. ✅
+- Ils peuvent mettre une recette en favori. ✅
+- Ils peuvent modifier ou supprimer leurs recettes. ✅ //si il y a un possibilité de rendre sauf le user dans le backend
+- Ils peuvent voir la liste des favoris ✅
+- Ils peuvent voir le profil 
+- L’administrateur peut gérer les utilisateurs et supprimer les recettes ou commentaires inappropriés.

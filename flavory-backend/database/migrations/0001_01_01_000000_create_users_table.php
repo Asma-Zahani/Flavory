@@ -34,7 +34,7 @@ return new class extends Migration
             'email_verified_at' => now(),
             'password' => Hash::make("admin"),
             'role' => RoleEnum::ADMIN->value,
-            'profile_photo' => "user.jpg"
+            'profile_photo' => "/storage/users/user_1.png"
         ]);
 
         /*Schema::create('password_reset_tokens', function (Blueprint $table) {

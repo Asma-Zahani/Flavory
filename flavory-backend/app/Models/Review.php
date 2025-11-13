@@ -7,6 +7,29 @@ use Illuminate\Database\Eloquent\Model;
 
 class Review extends Model
 {
-    /** @use HasFactory<\Database\Factories\ReviewFactory> */
     use HasFactory;
+
+    protected $table = 'reviews';
+    protected $primaryKey = 'id';
+
+    protected $fillable = [
+        'user_id',
+        'recipe_id',
+        'rating',
+        'comment',
+    ];
+
+    public function user() {
+        return $this->belongsTo(User::class);
+    }
+    
+    public function recipe()
+    {
+        return $this->belongsTo(Recipe::class);
+    }
+
+    public function images()
+    {
+        return $this->hasMany(ReviewImage::class);
+    }
 }

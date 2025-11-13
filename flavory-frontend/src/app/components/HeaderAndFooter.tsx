@@ -1,13 +1,16 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @next/next/no-img-element */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-import { useState, useContext, useEffect } from "react";
+import { useState, useContext, useEffect, useRef } from "react";
 import Image from "next/image";
 import { CookingPot, Menu, Plus, Search, UserRound, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from 'next/navigation';
 import { UserContext } from "@/context/UserContext";
 import { SearchContext } from "@/context/SearchContext";
+import RecipeCard from "../(recipes)/RecipeCard";
+import { Recipe } from "@/types/recipe";
 
 
 export function Header() {
@@ -15,6 +18,8 @@ export function Header() {
   const { formData, setFormData } = useContext(SearchContext);
 
   const [menuOpen, setMenuOpen] = useState(false);
+  const [isFavoriteSelected, setIsFavoriteSelected] = useState(false);
+
   const router = useRouter();
   const pathname = usePathname();
   
@@ -91,7 +96,7 @@ export function Header() {
               <NavElement />
             </nav>
             {user ? (
-              <p className="hidden md:flex uppercase leading-[1.6em] text-[12px] font-500 tracking-[2px] hover:text-primary">Cart (0)</p>
+              <p onClick={() => setIsFavoriteSelected(true)} className="hidden md:flex uppercase leading-[1.6em] text-[12px] font-500 tracking-[2px] hover:text-primary cursor-pointer">Favorites ({user.favorites ? user.favorites.length : 0})</p>
             ) : (
               <p className="hidden md:flex uppercase leading-[1.6em] text-[12px] font-500 tracking-[2px] gap-3">
                 <Link href="/login" className="hover:text-primary">Login</Link> / 
@@ -101,6 +106,8 @@ export function Header() {
           </div>
         </div>
       </header>
+      <FavoriteSidebar user={user} isFavoriteSelected={isFavoriteSelected} setIsFavoriteSelected={setIsFavoriteSelected} />
+      
       <div className={`fixed bottom-0 left-0 w-full bg-white shadow-[0px_-8px_44px_0px_rgba(20,25,44,0.08)] z-50 transition-transform duration-700 ease-in-out ${showSticky ? "translate-y-0" : "translate-y-full"}`}>
         <div className="mx-10 lg:mx-55">
           <div className="px-8 py-4">
@@ -122,7 +129,7 @@ export function Header() {
               <Link href="/search-recipes" className={`${pathname === "/search-recipes" ? 'text-primary' : 'text-gray'}`}>
                 <Search />
               </Link>
-              <Link href={user ? "user-account" : "/login"} className={`${pathname === "/user-account" ? 'text-primary' : 'text-gray'}`}>
+              <Link href={user ? "/user-account" : "/login"} className={`${pathname === "/user-account" ? 'text-primary' : 'text-gray'}`}>
                 <UserRound />
               </Link>
             </div>
@@ -156,6 +163,71 @@ function NavElement({ mobile }: { mobile?: boolean }) {
   )
 }
 
+type FavoriteSidebarProps = {user: {favorites: any[]}; isFavoriteSelected: boolean; setIsFavoriteSelected: (value: boolean) => void};
+
+export function FavoriteSidebar({ user, isFavoriteSelected, setIsFavoriteSelected }: FavoriteSidebarProps) {
+  const sidebarRef = useRef<HTMLDivElement>(null);
+  const pathname = usePathname();
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (sidebarRef.current && !sidebarRef.current.contains(event.target as Node)) {
+        setIsFavoriteSelected(false);
+      }
+    };
+
+    if (isFavoriteSelected) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isFavoriteSelected, setIsFavoriteSelected]);
+
+  useEffect(() => {
+    if (isFavoriteSelected) {
+      setIsFavoriteSelected(false);
+    }
+  }, [pathname]);
+
+  if (!isFavoriteSelected) return null;
+
+  return (
+    <div ref={sidebarRef} className={`fixed bottom-0 right-0 w-80 h-full bg-white shadow-[0px_-8px_44px_0px_rgba(20,25,44,0.08)] z-[100] flex flex-col transition-transform duration-500 ease-in-out`}
+      data-aos="fade-left" data-aos-duration="500" data-aos-once="true" >
+      <button onClick={() => setIsFavoriteSelected(false)} type="button" className="absolute top-3 end-2.5 text-gray hover:text-primary rounded-md w-8 h-8 inline-flex justify-center items-center hover:scale-110">
+        <X size={20} />
+      </button>
+
+      <div className="my-4 px-4">
+        <h2 className="text-xl font-semibold font-garamond tracking-wide text-gray">
+          Favorites List
+        </h2>
+      </div>
+
+      <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4 scrollbar">
+        {user.favorites.length > 0 ? (
+          user.favorites.map((recipe: Recipe) => (
+            <Link href={`/recipes/${recipe.id}`} key={recipe.id}>
+              <RecipeCard recipe={recipe} information={false} favorite={true} />
+            </Link>
+          ))
+        ) : (
+          <p className="text-sm text-center mt-10">
+            You have no favorite recipes yet.
+          </p>
+        )}
+      </div>
+
+      <div className="p-4 border-t border-gray-200">
+        <Link onClick={() => setIsFavoriteSelected(false)} href={user.favorites.length > 0 ? "/favorites" : "/recipes"} type="button" className="w-full inline-flex justify-center items-center font-raleway text-xs font-semibold tracking-wider uppercase rounded-none outline-none transition-transform duration-200 ease-out px-6 py-3 cursor-pointer text-white bg-primary hover:scale-105">
+          {user.favorites.length > 0 ? "View Favorites" : "View Recipes"}
+        </Link>
+      </div>
+    </div>
+  );
+}
 
 export function Footer() {
   return (

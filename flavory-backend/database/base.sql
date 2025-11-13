@@ -1,10 +1,9 @@
 INSERT INTO recipes (id, author_id, image, category, title, description, cookingTime, difficulty, numberPerson, calories, fat, protein, sugars, carbs, created_at, updated_at)
 VALUES
-(1, 1, 'recipe-1.jpg', 'Breakfast', 'Crispy choco croissants', 'Lorem ipsum dolor sit amet, consectetur adipicibe elit, sed do eiusmod tempor inci didunt ut labore e dolore magnna ad aliquam. Ut enim', 90, 'Hard', 3, 436, 200, 100, 146, 24, NOW(), NOW()),
-(2, 1, 'recipe-2.jpg', 'Main Dish', 'Lamb soup with spices & rice', 'Lorem ipsum dolor sit amet, consectetur adipicibe elit, sed do eiusmod tempor inci didunt ut labore e dolore magnna ad aliquam. Ut enim', 90, 'super easy', 6, 436, 200, 100, 146, 24, NOW(), NOW()),
-(3, 1, 'recipe-3.jpg', 'Main Dish', 'Avocado bacon sandwich with lettuce', 'Lorem ipsum dolor sit amet, consectetur adipicibe elit, sed do eiusmod tempor inci didunt ut labore e dolore magnna ad aliquam. Ut enim', 30, 'super easy', 2, 436, 200, 100, 146, 24, NOW(), NOW()),
-(4, 1, 'recipe-4.jpg', 'Main Dish', 'Seashells with spinach, basil & ricotta', 'Lorem ipsum dolor sit amet, consectetur adipicibe elit, sed do eiusmod tempor inci didunt ut labore e dolore magnna ad aliquam. Ut enim', 30, 'super easy', 6, 436, 200, 100, 146, 24, NOW(), NOW());
-
+(1, 1, '/storage/recipes/recipe_1.jpg', 'Breakfast', 'Crispy choco croissants', 'Lorem ipsum dolor sit amet, consectetur adipicibe elit, sed do eiusmod tempor inci didunt ut labore e dolore magnna ad aliquam. Ut enim', 90, 'Hard', 3, 436, 200, 100, 146, 24, NOW(), NOW()),
+(2, 1, '/storage/recipes/recipe_2.jpg', 'Main Dish', 'Lamb soup with spices & rice', 'Lorem ipsum dolor sit amet, consectetur adipicibe elit, sed do eiusmod tempor inci didunt ut labore e dolore magnna ad aliquam. Ut enim', 90, 'super easy', 6, 436, 200, 100, 146, 24, NOW(), NOW()),
+(3, 1, '/storage/recipes/recipe_3.jpg', 'Main Dish', 'Avocado bacon sandwich with lettuce', 'Lorem ipsum dolor sit amet, consectetur adipicibe elit, sed do eiusmod tempor inci didunt ut labore e dolore magnna ad aliquam. Ut enim', 30, 'super easy', 2, 436, 200, 100, 146, 24, NOW(), NOW()),
+(4, 1, '/storage/recipes/recipe_4.jpg', 'Main Dish', 'Seashells with spinach, basil & ricotta', 'Lorem ipsum dolor sit amet, consectetur adipicibe elit, sed do eiusmod tempor inci didunt ut labore e dolore magnna ad aliquam. Ut enim', 30, 'super easy', 6, 436, 200, 100, 146, 24, NOW(), NOW());
 
 INSERT INTO ingredients (id, name) VALUES
 (1, 'Chicken Breast'),
@@ -61,11 +60,21 @@ Duis aute irure dolor in mea henderit in voluptate velit esse cillum dolore eu f
 INSERT INTO step_images (step_id, image_path)
 VALUES
 -- Étape 1
-(1, 'recette1_step1_1.jpg'),
-(1, 'recette1_step1_2.jpg'),
+(1, '/storage/steps/recipe1_step1_1.jpg'),
+(1, '/storage/steps/recipe1_step1_2.jpg'),
 
 -- Étape 3
-(3, 'recette1_step3_1.jpg'),
-(3, 'recette1_step3_2.jpg'),
-(3, 'recette1_step3_3.jpg');
+(3, '/storage/steps/recipe1_step3_1.jpg'),
+(3, '/storage/steps/recipe1_step3_2.jpg'),
+(3, '/storage/steps/recipe1_step3_3.jpg');
 
+INSERT INTO reviews (user_id, recipe_id, rating, comment, created_at, updated_at)
+VALUES
+(1, 1, 5, 'Délicieux ! J’ai ajouté un peu de miel, parfait.', NOW(), NOW()),
+(1, 1, 4, 'Très bon goût, mais un peu long à préparer.', NOW(), NOW()),
+(1, 2, 5, 'Recette réussie du premier coup, bravo !', NOW(), NOW()),
+(1, 3, 3, 'Pas mal, mais manque un peu d’assaisonnement.', NOW(), NOW());
+
+INSERT INTO review_images (review_id, image_path)
+VALUES
+(1, '/storage/reviews/recipe1_review1_1.jpg');

@@ -30,6 +30,7 @@ class Recipe extends Model
         'author_id'
     ];
 
+    protected $appends = ['review'];
     protected $casts = [
         'category' => CategoryEnum::class,
         'difficulty' => DifficultyEnum::class,
@@ -50,8 +51,27 @@ class Recipe extends Model
         return $this->hasMany(Step::class);
     }
 
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
+
     public function favoritedBy()
     {
         return $this->belongsToMany(User::class, 'favorites', 'recipe_id', 'user_id');
+    }
+
+    public function getReviewAttribute()
+    {
+        $reviews = $this->reviews;
+        $count = $reviews->count();
+
+        if ($count === 0) {
+            return ['average' => 0,'count' => 0];
+        }
+
+        $average = round($reviews->avg('rating'), 1);
+
+        return ['average' => $average,'count' => $count];
     }
 }

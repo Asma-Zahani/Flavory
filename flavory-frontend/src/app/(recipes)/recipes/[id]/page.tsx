@@ -1,25 +1,28 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'; 
 
 import { useParams, useRouter } from 'next/navigation';
 import { useContext, useEffect, useState } from 'react';
-import { Pencil, Star } from 'lucide-react';
+import { Pencil } from 'lucide-react';
 import Image from 'next/image';
 import React from 'react';
 import { Recipe } from '@/types/recipe';
 import Sidebar from '../../Sidebar';
-import {IngredientRow, StepRow} from './IngredientAndStepRows';
-import RatingStars from './RatingStars';
+import {IngredientRow, StepRow, ReviewRow} from './Rows';
+import RatingStars, { ReviewStars } from './RatingStars';
 import { createEntity } from '@/services/EntitesService';
 import { UserContext } from '@/context/UserContext';
+import { SuccessMessageContext } from '@/context/SuccessMessageContext';
+import FileInput from '@/app/components/FileInput';
 
 export default function RecipeDetail () {
-    const {user} = useContext(UserContext);
+    const {user, setUser} = useContext(UserContext);
+    const { setSuccessMessage } = useContext(SuccessMessageContext);
     const router = useRouter();
     const params = useParams<{ id: string }>();
     const id = params.id;
 
     const [recipe, setRecipe] = useState<Recipe | null>(null);
-    const [formData, setFormData] = useState({email: "", password: "", isChecked: false}); 
 
     useEffect(() => {
         if (!id) return;
@@ -34,9 +37,9 @@ export default function RecipeDetail () {
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = parseInt(e.target.value);
         if (!isNaN(value) && value > 0) {
-        setServings(value);
+            setServings(value);
         } else {
-        setServings(1);
+            setServings(1);
         }
     };
     
@@ -64,22 +67,98 @@ export default function RecipeDetail () {
         setIsFavorite(!isFavorite);
         setIsDisabled(true);
 
-        const res = await createEntity("favorite", {user_id: user?.id, recipe_id: recipe?.id});
-        const data = await res.json(); 
+        await createEntity("favorite", {user_id: user?.id, recipe_id: recipe?.id});
 
-        console.log(data);
+        if (isFavorite) {
+            setUser((prev: { favorites: any[]; }) => ({
+                ...prev,
+                favorites: prev.favorites.filter((fav) => fav.id !== recipe?.id),
+            }));
+        } else {
+            setUser((prev: { favorites: any; }) => ({
+                ...prev,
+                favorites: [...prev.favorites, recipe],
+            }));
+        }
         
         setTimeout(() => setIsDisabled(false), 500);
     };
+    
+    const [formData, setFormData] = useState({user_id: user?.id, recipe_id: recipe?.id, rating: 0, comment: "", images: [] as File[]});  
+    const [previewImages, setPreviewImages] = useState<string[]>([]);
+    
+    useEffect(() => {
+        if (user && recipe) {            
+            setFormData({user_id: user.id, recipe_id: recipe.id, rating: 0, comment: "", images: []});
+        }
+    }, [user, recipe]);    
 
+    const handleAdd = async (e: React.FormEvent) => {
+        e.preventDefault();
+
+        if (!user || !recipe) return;
+
+        const res = await createEntity("reviews", formData);
+        const data = await res.json(); 
+
+        const reviewId = data.data.id;
+        let urls: string[] = [];
+
+        if (formData.images.length > 0) {
+            const uploadPromises = formData.images.map(async (file, index) => {
+                const fd = new FormData();
+                fd.append("file", file);
+                fd.append("type", "review");
+                fd.append("index", (index + 1).toString());
+                fd.append("recipe_id", recipe.id.toString());
+                fd.append("review_id", reviewId.toString());
+
+                const res = await fetch("/api/upload", { method: "POST", body: fd });
+                const data = await res.json();
+                
+                console.log(data);
+                
+                return data.url;
+            });
+
+            urls = await Promise.all(uploadPromises);
+        }
+
+        if (res.ok) {
+            setSuccessMessage(data.message);
+            setRecipe(prevRecipe => {
+                if (!prevRecipe) return prevRecipe;
+
+                return {
+                    ...prevRecipe,
+                    reviews: [
+                        ...prevRecipe.reviews,
+                        {
+                            id: reviewId,
+                            user: user,          
+                            rating: formData.rating,
+                            comment: formData.comment,
+                            images: urls.map((url) => ({
+                                image_path: url,
+                            })),
+                            created_at: new Date().toISOString(),
+                        },
+                    ],
+                };
+            });
+            setFormData({ user_id: user?.id, recipe_id: recipe?.id, rating: 0 , comment: "", images: [] });
+            setPreviewImages([]);
+        }   
+    };
+    
     if (!recipe) return <p>Loading...</p>;
-
+    
     return (
         <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 py-12 sm:py-20">
             <div className='col-span-2 px-0 sm:px-6'> 
                 {/* <p className='text-[45px] sm:text-[52px] font-500 leading-[1.08em] font-garamond mb-4'>{recipe.title}</p> */}
-                <div className="flex items-center justify-between mb-4">
-                    <p className='text-[45px] sm:text-[52px] font-500 leading-[1.08em] font-garamond'>
+                <div className="flex items-center justify-between mb-4 w-full">
+                    <p className='text-[45px] sm:text-[52px] font-500 leading-[1.08em] font-garamond max-w-[80%]'>
                         {recipe.title}
                     </p>
                     <div>
@@ -98,7 +177,7 @@ export default function RecipeDetail () {
 
                 <div className='flex'>
                     <div className='flex items-center pr-11 my-5'>
-                        <Image src={`/users/${recipe.author.profile_photo ?? "user.jpg"}`} alt='' width={55} height={55} className='mr-6.5 rounded-full' priority />
+                        <Image src={recipe.author.profile_photo ? `${process.env.NEXT_PUBLIC_BACKEND_URL}${recipe.author.profile_photo}` : 'user.jpg'} alt='' width={55} height={55} className='mr-6.5 rounded-full' priority />
                         <div className='flex flex-col'>
                             <a className='font-garamond font-500 text-xl'>{recipe.author.full_name}</a>
                             <p className='font-raleway text-gray text-[15px]'>{new Date(recipe.created_at).toLocaleDateString("en-US", {year: "numeric", month: "long", day: "numeric"})}</p>
@@ -123,7 +202,7 @@ export default function RecipeDetail () {
                         </ul>
                     </div>
                 </div>
-                <Image src={`/recipes/${recipe.image}`} alt={recipe.title} width={900} height={1000} priority />
+                <Image src={`${process.env.NEXT_PUBLIC_BACKEND_URL}${recipe.image}`} alt={recipe.title} width={900} height={1000} priority />
                 <div className="flex flex-col sm:flex-row items-center justify-center my-2 py-4 gap-6 uppercase text-xs text-gray sm:before:content-[''] sm:before:flex-1 sm:before:border-t sm:before:border-grayLight sm:after:content-[''] sm:after:flex-1 sm:after:border-t sm:after:border-grayLight">
                     <div className='sm:hidden w-full border-t border-grayLight'></div>
                     <p className='flex items-center gap-2'>
@@ -162,14 +241,8 @@ export default function RecipeDetail () {
                 </div>
                 <p className='my-4 text-gray'>{recipe.description}</p>
                 <div className='flex items-center gap-3 font-garamond font-500 text-xl py-6 border-b border-grayLight'>
-                    Reviews 
-                    <div className='flex text-primary'>
-                        <Star size={14} fill="currentColor" />
-                        <Star size={14} fill="currentColor" />
-                        <Star size={14} fill="currentColor" />
-                        <Star size={14} fill="currentColor" />
-                        <Star size={14} fill="currentColor" />
-                    </div>                    
+                    <p className='flex items-center gap-1'>Reviews ({recipe.review.count}) :</p>
+                    <div className='mt-1 flex items-center'>{recipe.review.average}<ReviewStars average={recipe.review.average} /></div> 
                 </div>
                 {recipe.recipe_ingredients.length > 0 &&
                     <div>
@@ -242,9 +315,7 @@ export default function RecipeDetail () {
                 {recipe.steps.length > 0 &&
                     <div>
                         <div className="flex flex-row items-center gap-6 after:content-[''] after:flex-1 after:border-t after:border-grayLight">
-                            <p className='text-[45px] font-500 leading-[1.08em] font-garamond mb-4'>
-                                Directions         
-                            </p>                    
+                            <p className='text-[45px] font-500 leading-[1.08em] font-garamond mb-4'>Directions</p>                    
                         </div>
                         <div>                   
                             {recipe.steps.map((step) => (
@@ -256,29 +327,39 @@ export default function RecipeDetail () {
                         </div>
                     </div>
                 }
-                <div>
-                    <h4 className='font-garamond font-500 text-[38px] leading-[1.1em]'>Leave a Reply</h4>
-                    <form>
-                        <p className='my-3.75 text-gray'>Your email address will not be published. Required fields are marked *</p>
-                        <div className='my-3.75 text-gray flex items-center'>
-                            <label>Rating</label>
-                            <RatingStars onChange={(value) => console.log("User rating:", value)} />
+                
+                {recipe.reviews.length > 0 && (
+                    <div>
+                        <div className="flex flex-row items-center gap-6 after:content-[''] after:flex-1 after:border-t after:border-grayLight">
+                            <p className='text-[45px] font-500 leading-[1.08em] font-garamond mb-4'>Reviews</p>                    
                         </div>
-                        <textarea placeholder="Your Comment *" className='w-full h-23 mb-4 px-5 py-3 text-base placeholder:text-gray focus:text-black border border-grayDark rounded-none outline-none focus:border-black transition-colors duration-200 ease-out resize-none'/>
-                        <input placeholder="Your Name *" className='w-full mb-5 px-5 py-3 text-base placeholder:text-gray focus:text-black border border-grayDark rounded-none outline-none focus:border-black transition-colors duration-200 ease-out resize-none '/>
-                        <input placeholder="Your Email *" className='w-full mb-5 px-5 py-3 text-base placeholder:text-gray focus:text-black border border-grayDark rounded-none outline-none focus:border-black transition-colors duration-200 ease-out resize-none '/>
-                        <label className="flex items-center cursor-pointer text-sm text-gray mb-5.5">
-                            <input type="checkbox" checked={formData.isChecked} onChange={() => {setFormData({ ...formData, isChecked: !formData.isChecked })}} className="hidden"/>
-                            <span className={`appearance-none w-4 h-4 mr-2 rounded-sm ${formData.isChecked ? 'bg-primary' : 'border border-gray'} flex items-center justify-center`}>
-                                {formData.isChecked && <span className="text-white text-sm">✔</span>}
-                            </span>
-                            Save my name and email in this browser for the next time I comment.
-                        </label>
-                        <button type="submit" className="relative inline-flex items-center font-raleway text-xs font-600 tracking-wider uppercase rounded-none outline-none transition-colors duration-200 ease-out px-14.5 py-4.5 cursor-pointer z-30 text-white hover:text-primary bg-primary hover:bg-transparent border border-transparent hover:border-primary">
-                            Post Comment
-                        </button>
-                    </form>
-                </div>
+                        <div>                   
+                            {recipe.reviews.map((review) => (
+                                <ReviewRow key={review.id} review={review}/>
+                            ))}
+                        </div>
+                    </div>
+                )}
+
+
+                {user && 
+                    <div className='mt-10'>
+                        <h4 className='font-garamond font-500 text-[38px] leading-[1.1em]'>Leave a Review</h4>
+                        <form onSubmit={handleAdd}>
+                            <p className='my-3.75 text-gray'>Required fields are marked *</p>
+                            <div className='my-3.75 text-gray flex items-center'>
+                                <label>Rating*</label>
+                                <RatingStars value={formData.rating} onChange={value => setFormData(prev => ({ ...prev, rating: value }))} />
+                            </div>
+                            <textarea name="comment" placeholder="Your Comment*" value={formData.comment} onChange={e => setFormData(prev => ({ ...prev, comment: e.target.value }))} className='w-full h-23 mb-4 px-5 py-3 text-base placeholder:text-gray focus:text-black border border-grayDark rounded-none outline-none focus:border-black transition-colors duration-200 ease-out resize-none'/>
+                            <FileInput multiple previewImages={previewImages} setPreviewImages={setPreviewImages} onChange={(files) => setFormData(prev => ({ ...prev, images: files }))}/>
+                            <button type="submit" className="relative inline-flex items-center font-raleway text-xs font-600 tracking-wider uppercase rounded-none outline-none transition-colors duration-200 ease-out px-14.5 py-4.5 cursor-pointer z-30 text-white hover:text-primary bg-primary hover:bg-transparent border border-transparent hover:border-primary">
+                                Post Review
+                            </button>
+                        </form>
+                    </div>
+                }
+                
             </div>
             <div className='col-span-2 lg:col-span-1 px-0 lg:px-6 mt-3 lg:mt-0'>
                 <Sidebar/>
