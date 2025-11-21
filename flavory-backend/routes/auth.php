@@ -1,11 +1,5 @@
 <?php
 
-use App\Http\Controllers\Auth\AuthenticatedSessionController;
-use App\Http\Controllers\Auth\EmailVerificationNotificationController;
-use App\Http\Controllers\Auth\NewPasswordController;
-use App\Http\Controllers\Auth\PasswordResetLinkController;
-use App\Http\Controllers\Auth\RegisteredUserController;
-use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 // use App\Mail\LoginSuccessEmail;
@@ -17,14 +11,15 @@ Route::post('/login', [AuthController::class,'login']);
 
 Route::post('/verify-email', [AuthController::class, 'verifyEmail']);
 
+Route::put('/updatePassword/{id}', [AuthController::class, 'updatePassword'])->middleware('auth:sanctum');
+
+Route::post('logout', [AuthController::class,'logout'])->middleware('auth:sanctum');
+
 /*
 Route::post('autoLogin', [AuthController::class,'autoLogin']);
 
 Route::post('/email/resend', [AuthController::class,'resend']);
 
-Route::post('logout', [AuthController::class,'logout'])->middleware('auth:sanctum');
-
-Route::put('/updatePassword/{id}', [AuthController::class, 'updatePassword'])->middleware('auth:sanctum');
 
 Route::post('/forgot-password', [AuthController::class, 'sendResetLink']);
 

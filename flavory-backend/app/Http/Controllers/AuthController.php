@@ -35,7 +35,7 @@ class AuthController extends Controller
 
         Mail::to($user->email)->send(new VerifyEmail($user, $token));
 
-        return response()->json(['message' => "Compte créé. Veuillez vérifier votre email.", 'user_id' => $user->id], 201);  
+        return response()->json(['message' => "Account created. Please verify your email.", 'user_id' => $user->id], 201);  
     }
 
     public function login(Request $request)
@@ -49,11 +49,11 @@ class AuthController extends Controller
         $user = User::where('email', $validatedData['email'])->first();
 
         if (!$user || !Hash::check($validatedData['password'], $user->password)) {
-            return response()->json(['errors' => ['email' => ['Les identifiants sont incorrects.']]], 401);
+            return response()->json(['errors' => ['email' => ['Invalid credentials.']]], 401);
         }
 
         if (!$user->email_verified_at) {
-            return response()->json(['errors' => ['email' => ['Votre adresse email n\'a pas été vérifiée.']]], 403);
+            return response()->json(['errors' => ['email' => ['Your email address has not been verified.']]], 403);
         }
         $token = $user->createToken($user->prenom.' '.$user->nom);
         
@@ -77,18 +77,18 @@ class AuthController extends Controller
         $token = $request->input('token');
         
         if (!$token) {
-            return response()->json(['message' => 'Token invalide.'], 400);
+            return response()->json(['message' => 'Invalid token.'], 400);
         }
     
         $userId = Cache::get("email_verification_{$token}");
 
         if (!$userId) {
-            return response()->json(['message' => 'Token expiré ou invalide.'], 400);
+            return response()->json(['message' => 'Token expired or invalid.'], 400);
         }
 
         $user = User::find($userId);
         if (!$user) {
-            return response()->json(['message' => 'Utilisateur introuvable.'], 404);
+            return response()->json(['message' => 'User not found.'], 404);
         }
 
         $user->email_verified_at = now();
@@ -96,6 +96,31 @@ class AuthController extends Controller
 
         Cache::forget("email_verification_{$token}");
         
-        return response()->json(['message' => 'Email vérifié avec succès. Vous pouvez maintenant vous connecter.'], 200);
+        return response()->json(['message' => 'Email verified successfully. You can now log in.'], 200);
+    }
+
+    public function updatePassword(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+
+        $validatedData = $request->validate([
+            'current_password' => 'required|string',
+            'new_password' => 'required|string|min:8|confirmed'
+        ]);
+
+        if (!Hash::check($validatedData['current_password'], $user->password)) {
+            return response()->json(['errors' => ['current_password' => 'The current password is incorrect.']], 400);
+        }
+
+        $user->password = Hash::make($validatedData['new_password']);
+        $user->save();
+        
+        return response()->json(['message' => 'Password updated successfully.'], 200);
+    }
+
+    public function logout(Request $request){
+        $request->user()->tokens()->delete();
+        
+        return response()->json(['message' => 'You are logged out'], 201);  
     }
 }

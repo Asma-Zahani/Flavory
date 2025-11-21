@@ -1,7 +1,7 @@
-/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import { UploadCloudIcon, X } from "lucide-react";
+import Image from "next/image";
 import { DragEvent, useRef } from "react";
 
 interface FileInputProps {
@@ -13,7 +13,6 @@ interface FileInputProps {
 
 export default function FileInput({ multiple = false, previewImages, setPreviewImages, onChange }: FileInputProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  
 
   const handleFileSelect = (files: FileList) => {
     if (!files || files.length === 0) return;
@@ -65,7 +64,7 @@ export default function FileInput({ multiple = false, previewImages, setPreviewI
         <div className="grid grid-cols-3 gap-3 p-2 w-full justify-center">
           {previewImages.map((src, index) => (
             <div key={index} className="relative group">
-              <img src={src} alt="Preview" className="object-cover w-full h-full" />
+              <Image src={src} alt="" width={100} height={100} className="object-cover w-full h-full" />
               <button type="button" onClick={(e) => { e.stopPropagation(); handleRemove(index); }} className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1">
                 <X className="w-3 h-3" />
               </button>

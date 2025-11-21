@@ -13,8 +13,8 @@ interface DropdownInputProps {label?: string; name: string; value: string; place
 
 export default function RecipeForm ({formData, setFormData, recipeIngredients, setRecipeIngredients, recipeSteps, setRecipeSteps}: RecipeFormProps) {
     const [ingredients, setIngredients] = useState<Ingredient[]>([]);
-    
-    const [previewImages, setPreviewImages] = useState<string[]>([`${process.env.NEXT_PUBLIC_BACKEND_URL}${formData.image}`]);
+
+    const [previewImages, setPreviewImages] = useState<string[]>(formData.image && formData.image.length > 0 ? [`${process.env.NEXT_PUBLIC_BACKEND_URL}${formData.image}`] : []);
     const [previewStepImages, setPreviewStepImages] = useState<string[][]>(
         recipeSteps.map(step =>
             step.images?.map(img =>

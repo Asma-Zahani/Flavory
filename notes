@@ -1,14 +1,10 @@
 recipe ingredient clé primaire composé ( recipe_id, ingredient_id, type)
-supprimer et modifier review
+upload image (modifier review) 
+defaultimages register --- JUSTE A TESTER
+no recipe 
+pagination
 
 flavory/
-├── public/                     # Images, favicon, etc.
-│   ├── images/
-│   │   ├── logo.png
-│   │   ├── hero.jpg
-│   │   └── recettes/
-│   └── icons/
-│
 ├── src/
 │   ├── app/                    # ✅ (si tu utilises App Router de Next.js 13+)
 │   │   ├── layout.tsx          # Layout global

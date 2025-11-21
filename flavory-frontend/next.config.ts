@@ -10,7 +10,20 @@ const nextConfig: NextConfig = {
     ];
   },
   images: {
-    domains: ['127.0.0.1', 'localhost'], // autoriser le backend pour next/image
+    remotePatterns: [
+      {
+        protocol: 'http',
+        hostname: '127.0.0.1',
+        port: '8000',
+        pathname: '/**', // autorise tous les chemins
+      },
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+        port: '8000',
+        pathname: '/**', // autorise tous les chemins
+      },
+    ],
   },
 };
 

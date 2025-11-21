@@ -9,12 +9,13 @@ import { SuccessMessageContext } from "@/context/SuccessMessageContext";
 import { useParams, useRouter } from "next/navigation";
 import RecipeForm from "../../RecipeForm";
 import Popup from "@/app/components/Popup";
+import { AlertCircle } from "lucide-react";
 
 export default function UpdateRecipePage () {
     const { user } = useContext(UserContext);
     const router = useRouter();
     const params = useParams();
-    const recipeId = params.id;    
+    const recipeId = params.id;
     const { setSuccessMessage } = useContext(SuccessMessageContext);
     const [loading, setLoading] = useState(false);
     const [load, setLoaded] = useState(false);
@@ -129,8 +130,8 @@ export default function UpdateRecipePage () {
         }   
     };
 
-    const handleDelete = async (e: React.FormEvent) => {
-        e.preventDefault();
+    const handleDelete = async (e?: React.FormEvent) => {
+        e?.preventDefault();
         
         const res = await deleteEntity("recipes", recipeId);
         const data = await res.json(); 
@@ -155,7 +156,7 @@ export default function UpdateRecipePage () {
                         <button onClick={() => setIsDelete(true)} type="submit" className="relative inline-flex items-center font-raleway text-xs font-600 tracking-wider uppercase rounded-none outline-none transition-colors duration-200 ease-out px-14.5 py-4.5 cursor-pointer z-30 text-primary bg-transparent border border-primary hover:border-2 hover:scale-105 hover:font-bold">
                             Delete Recipe
                         </button>
-                        {isDelete && <Popup handleDelete={handleDelete} />}
+                        {isDelete && <Popup icon={<AlertCircle className="mx-auto mb-4 text-gray" size={56} />} setIsOpen={() => setIsDelete(false)} message="Are you sure you want to delete this recipe?" handleConfirm={handleDelete} />}
                     </div>
                 </div>
             </>

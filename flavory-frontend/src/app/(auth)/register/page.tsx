@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import FileInput from "@/app/components/FileInput";
 import { SuccessMessageContext } from "@/context/SuccessMessageContext";
@@ -15,6 +16,7 @@ export default function RegisterPage() {
   const [error, setError] = useState("");
   const { setSuccessMessage } = useContext(SuccessMessageContext);
   const [loading, setLoading] = useState(false);
+  const [previewImages, setPreviewImages] = useState<string[]>([]);
 
   useEffect(() => {
     if (localStorage.getItem("token")) {
@@ -86,7 +88,7 @@ export default function RegisterPage() {
         </p>
         <div>
           <label className="font-raleway font-400 text-gray text-[15px] leading-[1.6em]">Profile Photo</label>
-          <div className="mt-2"><FileInput defaultImages={[]} onChange={(files) => setFormData(prev => ({ ...prev, images: files }))}/></div>
+          <div className="mt-2"><FileInput previewImages={previewImages} setPreviewImages={setPreviewImages} onChange={(file) => setFormData((prev: any) => ({ ...prev, image: file }))}/></div>
         </div>
         <div>
           <label className="font-raleway font-400 text-gray text-[15px] leading-[1.6em]">Password *</label>

@@ -335,7 +335,7 @@ export default function RecipeDetail () {
                         </div>
                         <div>                   
                             {recipe.reviews.map((review) => (
-                                <ReviewRow key={review.id} review={review}/>
+                                <ReviewRow key={review.id} review={review} setRecipe={setRecipe}/>
                             ))}
                         </div>
                     </div>

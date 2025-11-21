@@ -1,10 +1,13 @@
 import FileInput from "@/app/components/FileInput";
-import { Images, Review } from "@/types/recipe";
+import { Images, Recipe, Review } from "@/types/recipe";
 import { EllipsisIcon, Star } from "lucide-react";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import RatingStars from "./RatingStars";
-import { getEntity } from "@/services/EntitesService";
+import { deleteEntity, getEntity, updateEntity } from "@/services/EntitesService";
+import { UserContext } from "@/context/UserContext";
+import { useRouter } from "next/navigation";
+import { SuccessMessageContext } from "@/context/SuccessMessageContext";
 
 interface IngredientRowProps {
   quantity: number;
@@ -83,16 +86,95 @@ export function StepContent({ instruction, images }: StepContentProps) {
 
 interface ReviewRowProps {
   review: Review;
+  setRecipe: React.Dispatch<React.SetStateAction<Recipe | null>>
 }
 
-export function ReviewRow({ review }: ReviewRowProps) {
+export function ReviewRow({ review, setRecipe }: ReviewRowProps) {
+  const {user} = useContext(UserContext);
+  const router = useRouter();
+
   const [showImages, setShowImages] = useState(false)
   const [open, setOpen] = useState(false);
   const [openUpdate, setOpenUpdate] = useState(false);
-  
+  const [loading, setLoading] = useState(false);
+  const { setSuccessMessage } = useContext(SuccessMessageContext);
+
   const [formData, setFormData] = useState({user_id: review.user_id, recipe_id: review.recipe_id, rating: 0, comment: "", images: [] as File[]});  
   const [previewImages, setPreviewImages] = useState<string[]>([]);
   
+  const handleUpdate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+
+    const res = await updateEntity("reviews", review.id, formData);
+    const data = await res.json();
+
+    let urls: string[] = [];
+
+    if (formData.images.length > 0) {
+      const uploadPromises = formData.images.map(async (file, index) => {
+          const fd = new FormData();
+          fd.append("file", file);
+          fd.append("type", "review");
+          fd.append("index", (index + 1).toString());
+          fd.append("recipe_id", review.recipe_id!.toString());
+          fd.append("review_id", review.id.toString());
+
+          const res = await fetch("/api/upload", { method: "POST", body: fd });
+          const data = await res.json();
+          
+          console.log(data);
+          
+          return data.url;
+      });
+
+      urls = await Promise.all(uploadPromises);
+    }
+
+    setLoading(false);
+    if (res.ok) {
+        setSuccessMessage(data.message);
+        setRecipe(prev => {
+          if (!prev) return prev;
+
+          const updatedReview = {
+            ...review,
+            rating: formData.rating,
+            comment: formData.comment,
+            images: urls.map(url => ({
+              image_path: url
+            })),
+            updated_at: new Date().toISOString(),
+          };
+
+          return {
+            ...prev,
+            reviews: prev.reviews.map(r => 
+              r.id === review.id ? updatedReview : r
+            ),
+          };
+        });
+        setFormData({ user_id: user?.id, recipe_id: review.recipe_id, rating: 0 , comment: "", images: [] });
+    }   
+  };
+
+  const handleDelete = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    const res = await deleteEntity("reviews", review.id);
+    const data = await res.json(); 
+    if (res.ok) {
+        setSuccessMessage(data.message);
+        setRecipe(prev => {
+          if (!prev) return prev;
+          return {
+            ...prev,
+            reviews: prev.reviews.filter(r => r.id !== review.id)
+          };
+        });
+    }   
+  };
+
   useEffect(() => {
       const fetchRecipe = async () => {
           const res = await getEntity("reviews", review.id);
@@ -147,7 +229,7 @@ export function ReviewRow({ review }: ReviewRowProps) {
         <div className="text-sm mt-0.5">
           Helpful (0)
         </div>
-        <button type="button" onClick={() => setOpen(prev => !prev)}><EllipsisIcon /></button>
+        <button type="button" onClick={() => {if (!user) { router.push("/login")} else {setOpen(prev => !prev)};}}><EllipsisIcon /></button>
         <div className={`absolute bottom-7 py-2 px-4 right-0 bg-white shadow-[0px_6px_24px_rgba(20,25,44,0.15)] z-50 transform transition-all duration-300 ease-in-out ${open ? "opacity-100 translate-y-0 visible" : "opacity-0 translate-y-3 invisible"} `}>
           <span className="absolute -bottom-[5.5px] right-2 w-0 h-0 border-[6px] border-b-0 border-transparent border-t-white"></span>
           <button type="button" onClick={() => {setOpen(false); setOpenUpdate(true)}} className="text-xs text-gray cursor-pointer hover:scale-105">Edit/Delete</button>
@@ -163,9 +245,14 @@ export function ReviewRow({ review }: ReviewRowProps) {
             </div>
             <textarea name="comment" placeholder="Your Comment*" value={formData.comment} onChange={e => setFormData(prev => ({ ...prev, comment: e.target.value }))} className='w-full h-23 mb-4 px-5 py-3 text-base placeholder:text-gray focus:text-black border border-grayDark rounded-none outline-none focus:border-black transition-colors duration-200 ease-out resize-none'/>
             <FileInput multiple previewImages={previewImages} setPreviewImages={setPreviewImages} onChange={(files) => setFormData(prev => ({ ...prev, images: files }))}/>
-            <button type="submit" className="relative inline-flex items-center font-raleway text-xs font-600 tracking-wider uppercase rounded-none outline-none transition-colors duration-200 ease-out px-14.5 py-4.5 cursor-pointer z-30 text-white hover:text-primary bg-primary hover:bg-transparent border border-transparent hover:border-primary">
-                Post Review
-            </button>
+            <div className="flex gap-3">
+              <button onClick={(e) => {handleUpdate(e); setOpenUpdate(false)}} disabled={loading} type="submit" className="relative inline-flex items-center font-raleway text-xs font-600 tracking-wider uppercase rounded-none outline-none transition-colors duration-200 ease-out px-10 py-4 cursor-pointer z-30 text-white bg-primary hover:scale-105 hover:font-bold">
+                  {loading ? "Updating..." : "Update Review"}
+              </button>
+              <button onClick={handleDelete} type="submit" className="relative inline-flex items-center font-raleway text-xs font-600 tracking-wider uppercase rounded-none outline-none transition-colors duration-200 ease-out px-10 py-4.5 cursor-pointer z-30 text-primary bg-transparent border border-primary hover:border-2 hover:scale-105 hover:font-bold">
+                  Delete Review
+              </button>
+            </div>
           </form>
         </div>
       }
