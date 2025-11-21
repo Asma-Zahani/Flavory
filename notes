@@ -1,5 +1,4 @@
 recipe ingredient clé primaire composé ( recipe_id, ingredient_id, type)
-upload image (modifier review) 
 defaultimages register --- JUSTE A TESTER
 no recipe 
 pagination
@@ -61,28 +60,14 @@ flavory/
 │   │   ├── fetcher.ts          # Appels API front-end
 │   │   └── validators.ts       # Validation de données
 │
-│   ├── styles/
-│   │   ├── globals.css         # Styles globaux
-│   │   └── animations.css      # (ex: si tu veux customiser AOS)
-│
 │   ├── hooks/                  # Custom React hooks
 │   │   ├── useAuth.ts
 │   │   ├── useFavorites.ts
 │   │   └── useScrollPosition.ts
-│
-│   ├── context/                # Contexte global (React Context)
-│   │   └── AuthContext.tsx
-│
 │   └── types/                  # Types TypeScript
 │       ├── recipe.ts
 │       ├── user.ts
 │       └── comment.ts
-│
-├── .env                        # Variables d’environnement (ex: DB, API keys)
-├── tailwind.config.ts
-├── tsconfig.json
-├── next.config.mjs
-└── package.json
 
 ⚙️ Fonctionnalités du site :
 - Les utilisateurs peuvent créer un compte et se connecter. ✅

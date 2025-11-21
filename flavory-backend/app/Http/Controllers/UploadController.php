@@ -115,4 +115,14 @@ class UploadController extends Controller
             }
         }
     }
+
+    public function deleteImages(string $type, int $id)
+    {
+        $this->deleteOldImages($type, $id);
+
+        return response()->json([
+            'message' => 'Images deleted successfully'
+        ]);
+    }
+
 }

@@ -111,6 +111,8 @@ export function ReviewRow({ review, setRecipe }: ReviewRowProps) {
 
     let urls: string[] = [];
 
+    console.log(formData.images);
+    
     if (formData.images.length > 0) {
       const uploadPromises = formData.images.map(async (file, index) => {
           const fd = new FormData();
@@ -123,12 +125,12 @@ export function ReviewRow({ review, setRecipe }: ReviewRowProps) {
           const res = await fetch("/api/upload", { method: "POST", body: fd });
           const data = await res.json();
           
-          console.log(data);
-          
           return data.url;
       });
 
       urls = await Promise.all(uploadPromises);
+    } else {
+      await updateEntity("deleteImages/review", review.id, {});
     }
 
     setLoading(false);

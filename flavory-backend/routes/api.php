@@ -28,6 +28,7 @@ Route::get('recipes/latest/{limit}', [RecipeController::class, 'getLatestRecipes
 Route::apiResource('reviews', ReviewController::class);
 
 Route::post('/upload', [UploadController::class, 'store']);
+Route::put('/deleteImages/{type}/{id}', [UploadController::class, 'deleteImages']);
 
 Route::put('users/{id}', [UserController::class, 'update']);
 
