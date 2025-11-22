@@ -1,24 +1,5 @@
-const getEntities = async (label, currentPage, selectedItemPerPage, search, sortBy, sortOrder, filtreObj) => {
-  const params = new URLSearchParams();
-
-  if (currentPage) params.append("page", currentPage);
-  if (selectedItemPerPage) params.append("per_page", selectedItemPerPage);
-  if (search) params.append("search", search);
-  if (sortBy) params.append("sort_by", sortBy);
-  if (sortOrder) params.append("sort_order", sortOrder);
-  
-  if (filtreObj) {
-    Object.entries(filtreObj).forEach(([key, value]) => {
-      if (Array.isArray(value)) {
-        value.forEach((val) => params.append(`filtre[${key}][]`, val));
-      } else {
-        params.append(`filtre[${key}]`, value);
-      }
-    });
-  }
-
-  const url = `${process.env.NEXT_PUBLIC_API_URL}/${label}${params.toString() ? "?" + params.toString() : ""}`;
-  const response = await fetch(url, {
+const getEntities = async (label) => {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/${label}`, {
     headers: {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
@@ -26,7 +7,7 @@ const getEntities = async (label, currentPage, selectedItemPerPage, search, sort
     }
   }); 
   
-  return await response.json();
+  return response;
 };
 
 const getEntity = async (label, _id) => {

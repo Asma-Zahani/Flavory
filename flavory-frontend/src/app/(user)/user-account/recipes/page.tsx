@@ -7,21 +7,49 @@ import UserAccountLayout from "../UserAccountLayout";
 import Link from "next/link";
 import Image from "next/image";
 import AddedRecipesTable from "./AddedRecipesTable";
-import { deleteEntity } from "@/services/EntitesService";
+import { deleteEntity, getEntities } from "@/services/EntitesService";
 import { SuccessMessageContext } from "@/context/SuccessMessageContext";
 import { Recipe } from "@/types/recipe";
+import Pagination from "@/app/components/Pagination";
 
 export default function FavoritePage () {
     const {user} = useContext(UserContext);
     const { setSuccessMessage } = useContext(SuccessMessageContext);
     
-    const [recipes, setRecipes] = useState(user?.recipes || []);
+    const [recipes, setRecipes] = useState<Recipe[]>([]);
+    const [page, setPage] = useState(1); 
+    const [pagination, setPagination] = useState({
+        current_page: 1,
+        per_page: 10,
+        total: 0
+    });
 
     useEffect(() => {
         if (user?.recipes) {
             setRecipes(user.recipes);
         }
     }, [user]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const res = await getEntities(`recipeAdded?page=${page}`);
+            const json = await res.json();
+
+            setRecipes(json.data);
+
+            setPagination({
+                current_page: json.current_page,
+                per_page: json.per_page,
+                total: json.total
+            });
+        };
+
+        fetchData();
+    }, [page, user]);
+
+    const handlePageChange = (newPage: number) => {
+        setPage(newPage);
+    };
 
     const onDelete = async (recipeId: number) => {        
         const res = await deleteEntity("recipes", recipeId);
@@ -35,7 +63,7 @@ export default function FavoritePage () {
     return (
         <UserAccountLayout>
             <div className="px-8 py-4 flex flex-col min-h-[400px]">
-                {recipes.length > 0 ? (
+                {recipes?.length > 0 ? (
                     <>
                         <div className="flex justify-between items-start">
                             <h1 className="mb-6 font-500 font-garamond text-[40px] leading-[1.19em]">Added Recipes</h1>
@@ -44,6 +72,7 @@ export default function FavoritePage () {
                             </Link>
                         </div>
                         <AddedRecipesTable recipes={recipes} onDelete={onDelete} />
+                        <Pagination currentPage={pagination.current_page} totalItems={pagination.total} itemsPerPage={pagination.per_page} onPageChange={handlePageChange}/>
                     </>
                 ) : (
                     <div className="flex flex-col items-center justify-center">

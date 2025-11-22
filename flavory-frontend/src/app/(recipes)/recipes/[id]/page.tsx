@@ -48,7 +48,7 @@ export default function RecipeDetail () {
 
     useEffect(() => {
     if (user && recipe) {
-        const favoriteExists = user.favorites.some(
+        const favoriteExists = user.favorites?.some(
             (fav: { id: number; }) => fav.id === recipe.id
         );
         setIsFavorite(favoriteExists);

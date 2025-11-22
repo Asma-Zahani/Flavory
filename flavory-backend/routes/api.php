@@ -14,6 +14,10 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     return ($request->user())->load('favorites', 'recipes');
 });
 
+Route::middleware(['auth:sanctum'])->get('/recipeAdded', function (Request $request) {
+    return (($request->user())->recipes()->paginate(4));
+});
+
 Route::get('/enums', [EnumsController::class, 'getEnums']);
 
 Route::get('ingredients', [IngredientController::class, 'index']);

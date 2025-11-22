@@ -22,13 +22,15 @@ export default function RecipeCard({ recipe, information }: RecipeCardProps) {
 
     useEffect(() => {
         if (user && recipe) {
-            const favoriteExists = user.favorites.some(
+            const favoriteExists = user.favorites?.some(
                 (fav: { id: number; }) => fav.id === recipe.id
             );
             setIsFavorite(favoriteExists);
         }
     }, [user, recipe]);
 
+    console.log(user);
+    
     const toggleFavorite = async (e: React.MouseEvent) => {
         e.preventDefault();
         if (isDisabled) return;

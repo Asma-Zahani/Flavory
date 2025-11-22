@@ -202,7 +202,7 @@ export function FavoriteSidebar({ user, isFavoriteSelected, setIsFavoriteSelecte
       </div>
 
       <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4 scrollbar">
-        {user.favorites.length > 0 ? (
+        {user.favorites?.length > 0 ? (
           user.favorites.map((recipe: Recipe) => (
             <RecipeCard key={recipe.id} recipe={recipe} information={false} />
           ))
@@ -214,8 +214,8 @@ export function FavoriteSidebar({ user, isFavoriteSelected, setIsFavoriteSelecte
       </div>
 
       <div className="p-4 border-t border-grayLight">
-        <Link onClick={() => setIsFavoriteSelected(false)} href={user.favorites.length > 0 ? "/user-account/favorites" : "/recipes"} type="button" className="w-full inline-flex justify-center items-center font-raleway text-xs font-semibold tracking-wider uppercase rounded-none outline-none transition-transform duration-200 ease-out px-6 py-3 cursor-pointer text-white bg-primary hover:scale-105">
-          {user.favorites.length > 0 ? "View Favorites" : "View Recipes"}
+        <Link onClick={() => setIsFavoriteSelected(false)} href={user.favorites?.length > 0 ? "/user-account/favorites" : "/recipes"} type="button" className="w-full inline-flex justify-center items-center font-raleway text-xs font-semibold tracking-wider uppercase rounded-none outline-none transition-transform duration-200 ease-out px-6 py-3 cursor-pointer text-white bg-primary hover:scale-105">
+          {user.favorites?.length > 0 ? "View Favorites" : "View Recipes"}
         </Link>
       </div>
     </div>
