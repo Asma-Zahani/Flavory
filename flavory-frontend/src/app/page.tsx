@@ -2,10 +2,10 @@
 
 import { Recipe } from "@/types/recipe";
 import { useEffect, useState } from "react";
-import RecipeCard from "../(recipes)/RecipeCard";
 import Image from "next/image";
 import AOS from "aos";
 import "aos/dist/aos.css";
+import RecipeCard from "./(recipes)/RecipeCard";
 
 export default function HomePage() {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
@@ -47,7 +47,7 @@ export default function HomePage() {
         <h2 className="font-dancing font-400 text-primary text-[40px] mb-6">Start using your kitchen</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {recipes.length > 0 && recipes.map((recipe) => (
-            <RecipeCard key={recipe.id} recipe={recipe} information={false} favorite={false} /> 
+            <RecipeCard key={recipe.id} recipe={recipe} information={false} /> 
           ))}
         </div>
       </div>

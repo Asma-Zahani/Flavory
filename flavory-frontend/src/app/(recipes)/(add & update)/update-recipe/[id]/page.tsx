@@ -7,9 +7,9 @@ import {updateEntity, getEntity, deleteEntity} from "@/services/EntitesService"
 import { UserContext } from "@/context/UserContext";
 import { SuccessMessageContext } from "@/context/SuccessMessageContext";
 import { useParams, useRouter } from "next/navigation";
-import RecipeForm from "../../RecipeForm";
 import Popup from "@/app/components/Popup";
 import { AlertCircle } from "lucide-react";
+import RecipeForm from "../../RecipeForm";
 
 export default function UpdateRecipePage () {
     const { user } = useContext(UserContext);
