@@ -10,7 +10,7 @@ import AddedRecipesTable from "./AddedRecipesTable";
 import { deleteEntity, getEntities } from "@/services/EntitesService";
 import { SuccessMessageContext } from "@/context/SuccessMessageContext";
 import { Recipe } from "@/types/recipe";
-import Pagination from "@/app/components/Pagination";
+import Pagination from "@/components/Pagination";
 
 export default function FavoritePage () {
     const {user} = useContext(UserContext);

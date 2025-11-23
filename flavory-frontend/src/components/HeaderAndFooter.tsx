@@ -9,7 +9,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from 'next/navigation';
 import { UserContext } from "@/context/UserContext";
 import { SearchContext } from "@/context/SearchContext";
-import RecipeCard from "../(recipes)/RecipeCard";
+import RecipeCard from "../app/(recipes)/RecipeCard";
 import { Recipe } from "@/types/recipe";
 
 

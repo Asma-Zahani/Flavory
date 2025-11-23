@@ -1,4 +1,4 @@
-import FileInput from "@/app/components/FileInput";
+import FileInput from "@/components/FileInput";
 import { Images, Recipe, Review } from "@/types/recipe";
 import { EllipsisIcon, Star } from "lucide-react";
 import Image from "next/image";

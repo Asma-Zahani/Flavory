@@ -5,7 +5,7 @@ import { Recipe } from '@/types/recipe';
 import RecipeCard from '../RecipeCard';
 import Sidebar from '../Sidebar';
 import { SearchContext } from '@/context/SearchContext';
-import Pagination from "../../components/Pagination";
+import Pagination from "../../../components/Pagination";
 import Image from 'next/image';
 import Link from 'next/link';
 

@@ -7,7 +7,7 @@ import {updateEntity, getEntity, deleteEntity} from "@/services/EntitesService"
 import { UserContext } from "@/context/UserContext";
 import { SuccessMessageContext } from "@/context/SuccessMessageContext";
 import { useParams, useRouter } from "next/navigation";
-import Popup from "@/app/components/Popup";
+import Popup from "@/components/Popup";
 import { AlertCircle } from "lucide-react";
 import RecipeForm from "../../RecipeForm";
 

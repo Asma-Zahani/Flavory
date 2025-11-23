@@ -4,7 +4,7 @@ import "../../globals.css";
 import { UserProvider } from "@/context/UserContext";
 import { SearchProvider } from "@/context/SearchContext";
 import { SuccessMessageProvider } from "@/context/SuccessMessageContext";
-import { Footer, Header } from "./components/HeaderAndFooter";
+import { Footer, Header } from "../components/HeaderAndFooter";
 
 const raleway = Raleway({variable: "--font-raleway", subsets: ["latin"], weight: ["300", "400", "500", "600", "700"] });
 const libre = Libre_Baskerville({variable: "--font-libre", subsets: ["latin"], weight: ["400", "700"]});

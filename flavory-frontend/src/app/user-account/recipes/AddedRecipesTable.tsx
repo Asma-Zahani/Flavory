@@ -1,4 +1,4 @@
-import Popup from "@/app/components/Popup";
+import Popup from "@/components/Popup";
 import { Recipe } from "@/types/recipe";
 import { AlertCircle, Pencil, Trash2 } from "lucide-react";
 import Image from "next/image";

@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import Image from "next/image";
 import { BookOpen, Heart, Key, LayoutDashboard, LogOut } from "lucide-react";
 import Link from "next/link";
-import Popup from "@/app/components/Popup";
+import Popup from "@/components/Popup";
 import { createEntity } from "@/services/EntitesService";
 import { SuccessMessageContext } from "@/context/SuccessMessageContext";
 import { useRouter } from "next/navigation";

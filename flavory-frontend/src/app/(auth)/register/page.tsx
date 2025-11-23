@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-import FileInput from "@/app/components/FileInput";
+import FileInput from "@/components/FileInput";
 import { SuccessMessageContext } from "@/context/SuccessMessageContext";
 import { createEntity } from "@/services/EntitesService";
 import Link from "next/link";

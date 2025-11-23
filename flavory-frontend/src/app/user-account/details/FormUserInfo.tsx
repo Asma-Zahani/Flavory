@@ -4,7 +4,7 @@
 import { useState } from "react";
 import { UserContext } from "@/context/UserContext";
 import { useContext } from "react";
-import FileInput from "@/app/components/FileInput";
+import FileInput from "@/components/FileInput";
 import { updateEntity } from "@/services/EntitesService";
 import { SuccessMessageContext } from "@/context/SuccessMessageContext";
 import { useRouter } from "next/navigation";

@@ -13,7 +13,7 @@ import RatingStars, { ReviewStars } from './RatingStars';
 import { createEntity } from '@/services/EntitesService';
 import { UserContext } from '@/context/UserContext';
 import { SuccessMessageContext } from '@/context/SuccessMessageContext';
-import FileInput from '@/app/components/FileInput';
+import FileInput from '@/components/FileInput';
 
 export default function RecipeDetail () {
     const {user, setUser} = useContext(UserContext);

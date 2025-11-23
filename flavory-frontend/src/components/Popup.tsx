@@ -14,10 +14,10 @@ export default function Popup ({setIsOpen, icon, message, handleConfirm} : {setI
                     </button>
                     <div className="p-4 md:p-5 text-center">
                         {icon}
-                        <h3 className="mb-5 text-lg max-w-[80%] text-gray dark:text-gray-200 break-words text-wrap mx-auto whitespace-pre-wrap">
+                        <h3 className="mb-5 text-lg max-w-[80%] text-gray break-words text-wrap mx-auto whitespace-pre-wrap">
                             {message}
                         </h3>
-                        <div className="flex items-center rounded-b dark:border-gray-600 justify-center gap-3">
+                        <div className="flex items-center rounded-b justify-center gap-3">
                             <button onClick={handleConfirm} type="submit" className="relative inline-flex items-center font-raleway text-xs font-600 tracking-wider uppercase rounded-none outline-none transition-colors duration-200 ease-out px-10.5 py-3.5 cursor-pointer z-30 text-white bg-primary hover:scale-105 hover:font-bold">
                                 Yes, I&apos;m sure
                             </button>
