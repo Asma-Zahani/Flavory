@@ -59,7 +59,7 @@ export default function RecipeCard({ recipe, information }: RecipeCardProps) {
 
     return (
         <div> {/* data-aos="fade-up" data-aos-duration="500" data-aos-once="true" */}
-            <Link href={`/recipes/${recipe.id}`} ><Image src={`${process.env.NEXT_PUBLIC_BACKEND_URL}${recipe.image}`} alt={recipe.title} width={900} height={1000} priority /></Link>
+            <Link href={`/recipes/${recipe.id}`} ><Image src={`${process.env.NEXT_PUBLIC_BACKEND_URL}${recipe.image}`} alt={recipe.title} width={900} height={1000} /></Link>
             <div className='w-full'>
                 <div className='relative flex justify-between items-center'>
                     <div className='w-full'>

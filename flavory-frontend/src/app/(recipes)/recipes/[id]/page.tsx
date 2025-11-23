@@ -177,7 +177,7 @@ export default function RecipeDetail () {
 
                 <div className='flex'>
                     <div className='flex items-center pr-11 my-5'>
-                        <Image src={recipe.author.profile_photo ? `${process.env.NEXT_PUBLIC_BACKEND_URL}${recipe.author.profile_photo}` : 'user.jpg'} alt='' width={55} height={55} className='mr-6.5 rounded-full' priority />
+                        <Image src={recipe.author.profile_photo ? `${process.env.NEXT_PUBLIC_BACKEND_URL}${recipe.author.profile_photo}` : 'user.jpg'} alt='' width={55} height={55} className='mr-6.5 rounded-full' />
                         <div className='flex flex-col'>
                             <a className='font-garamond font-500 text-xl'>{recipe.author.full_name}</a>
                             <p className='font-raleway text-gray text-[15px]'>{new Date(recipe.created_at).toLocaleDateString("en-US", {year: "numeric", month: "long", day: "numeric"})}</p>
@@ -202,7 +202,7 @@ export default function RecipeDetail () {
                         </ul>
                     </div>
                 </div>
-                <Image src={`${process.env.NEXT_PUBLIC_BACKEND_URL}${recipe.image}`} alt={recipe.title} width={900} height={1000} priority />
+                <Image src={`${process.env.NEXT_PUBLIC_BACKEND_URL}${recipe.image}`} alt={recipe.title} width={900} height={1000} />
                 <div className="flex flex-col sm:flex-row items-center justify-center my-2 py-4 gap-6 uppercase text-xs text-gray sm:before:content-[''] sm:before:flex-1 sm:before:border-t sm:before:border-grayLight sm:after:content-[''] sm:after:flex-1 sm:after:border-t sm:after:border-grayLight">
                     <div className='sm:hidden w-full border-t border-grayLight'></div>
                     <p className='flex items-center gap-2'>

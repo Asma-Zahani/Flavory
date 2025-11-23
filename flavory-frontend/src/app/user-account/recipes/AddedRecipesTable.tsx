@@ -27,7 +27,7 @@ export default function AddedRecipesTable({ recipes, onDelete } : {recipes: Reci
                                 <td className="pl-10 py-4 text-sm whitespace-nowrap">
                                     <div className="flex items-center gap-2 w-70">
                                         <Link href={`/recipes/${recipe.id}`} className="flex flex-grow">
-                                            <Image src={`${process.env.NEXT_PUBLIC_BACKEND_URL}${recipe.image}`} alt={recipe.title} width={50} height={50} className="object-cover w-12 h-12 -mx-1 border-2 border-grayLight rounded-full" priority />
+                                            <Image src={`${process.env.NEXT_PUBLIC_BACKEND_URL}${recipe.image}`} alt={recipe.title} width={50} height={50} className="object-cover w-12 h-12 -mx-1 border-2 border-grayLight rounded-full" />
                                             <h4 className="flex items-center ml-4 whitespace-normal overflow-visible text-clip">
                                                 <p className='text-2xl font-500 leading-[1.08em] font-garamond block whitespace-nowrap overflow-hidden text-ellipsis max-w-55'>{recipe.title}</p>
                                             </h4>

@@ -197,7 +197,7 @@ export function ReviewRow({ review, setRecipe }: ReviewRowProps) {
       <div className="flex flex-col gap-2">
         <div className='flex items-center gap-2'>
           <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-100">
-            <Image src={review.user.profile_photo ? `${process.env.NEXT_PUBLIC_BACKEND_URL}${review.user.profile_photo}` : 'user.jpg'} alt='' width={40} height={40} className='mr-6.5 rounded-full' priority />                 
+            <Image src={review.user.profile_photo ? `${process.env.NEXT_PUBLIC_BACKEND_URL}${review.user.profile_photo}` : 'user.jpg'} alt='' width={40} height={40} className='mr-6.5 rounded-full' />                 
           </div>
           <p className="font-garamond font-500 text-lg">{review.user.full_name}</p>
           <p className='mt-1 font-raleway text-gray text-sm'>Published {new Date(review.created_at).toLocaleDateString("en-US", {year: "numeric", month: "short", day: "numeric"})}</p>

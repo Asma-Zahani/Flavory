@@ -1,9 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-"use client";
-
-import LoadingPage from "@/components/loading";
 import { Mail, Facebook, Instagram } from "lucide-react";
-import { useState } from "react";
 
 export default function Contact() {
 

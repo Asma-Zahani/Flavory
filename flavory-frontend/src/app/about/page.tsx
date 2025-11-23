@@ -8,7 +8,7 @@ export default function AboutPage() {
         <div className="py-12 sm:py-20 flex flex-col">
             <div>
                 <h1 data-aos="fade-down" data-aos-duration="580" data-aos-once="true" className="font-garamond font-500 text-[52px] leading-[1.2em] italic max-w-[80%] mb-10">Hello, It&apos;s Flavory. Welcome to recipes blog and food heaven!</h1>
-                <Image src="/about-img.jpg" alt="" width={1500} height={366} priority />
+                <Image src="/about-img.jpg" alt="" width={1500} height={366} />
                 <div data-aos="fade-up" data-aos-delay="100" className="text-gray my-6 text-lg leading-relaxed space-y-6">
                     <p>Welcome to <span className="font-semibold">Flavory</span>, your ultimate destination for discovering and sharing the authentic taste of Tunisia! We’re a vibrant community of food lovers, home cooks, and professional chefs passionate about celebrating the richness of Tunisian cuisine and culture.</p>
                     <p>Whether you’re here to explore traditional dishes, discover modern twists, or share your own creations,{" "} <span className="font-semibold">Flavory</span> {" "} brings everyone together around one table — full of flavor, color, and creativity. </p>
@@ -31,13 +31,9 @@ export default function AboutPage() {
 
             <div data-aos="zoom-in" className="relative w-full bg-beige bg-cover bg-center bg-no-repeat p-2 my-8" style={{ backgroundImage: "url('/pattern-new.png')" }}>
                 <div className="border border-primary grid grid-cols-1 lg:grid-cols-2 items-center justify-center">
-                    {/* <div className="flex items-center pt-25">
-                        <h2 className="font-dancing font-400 text-primary text-[40px] pr-6">Our newsletter</h2>
-                        <Image src={"leafs/decorative_leaf_2.svg"} alt="" width={120} height={150} priority />
-                    </div> */}
                     <div className="relative flex justify-center items-center mt-10 lg:mt-0">
-                        <Image src={"leafs/decorative_leaf_2.svg"} alt="" width={120} height={150} priority className="hidden lg:flex" />
-                        <Image src={"/books-img.png"} alt="" width={240} height={305} priority className="" />
+                        <Image src={"leafs/decorative_leaf_2.svg"} alt="" width={120} height={150} className="hidden lg:flex" />
+                        <Image src={"/books-img.png"} alt="" width={240} height={305} className="" />
                     </div>
                     <div className="my-10 lg:my-23">
                         <h3 className='font-garamond text-[38px] font-500 leading-[1.1em] my-6 lg:w-[70%] mx-[9%] lg:mx-0'>The new book is out. Enjoy every meal!</h3>

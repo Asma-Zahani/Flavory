@@ -58,7 +58,7 @@ export default function UserAccountLayout({ children }: UserAccountPageProps) {
             <div className="text-center mb-10">
                 <div className="w-24 h-24 mx-auto mb-3 rounded-full overflow-hidden border-3 border-primary">
                     <div className="w-full h-full bg-gray-200 flex items-center justify-center text-4xl">
-                        <Image src={user.profile_photo ? `${process.env.NEXT_PUBLIC_BACKEND_URL}${user.profile_photo}` : '/user.jpg'} alt='' width={100} height={100} priority />
+                        <Image src={user.profile_photo ? `${process.env.NEXT_PUBLIC_BACKEND_URL}${user.profile_photo}` : '/user.jpg'} alt='' width={100} height={100} />
                     </div>
                 </div>
                 <h3 className="text-xl font-bold text-gray-800">{user.full_name}</h3>

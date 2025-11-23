@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Favorite;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
@@ -43,5 +44,27 @@ class UserController extends Controller implements HasMiddleware
         return response()->json([
             'message' => 'User deleted successfully'
         ], 200);
+    }
+
+        public function storeOrUpdateFavorite(Request $request)
+    {
+        $validatedData = $request->validate([
+            'user_id' => 'required|integer|exists:users,id',
+            'recipe_id' => 'required|integer|exists:recipes,id'
+        ]);
+
+        $favorite = Favorite::where('user_id', $validatedData['user_id'])
+                        ->where('recipe_id', $validatedData['recipe_id'])
+                        ->first();
+                        
+        if ($favorite) {
+            Favorite::where('user_id', $validatedData['user_id'])
+                   ->where('recipe_id', $validatedData['recipe_id'])
+                   ->delete();
+            return response()->json(['message' => 'Favorite removed'], 200);
+        } else {
+            Favorite::create($validatedData);
+            return response()->json(['message' => 'Favorite added'], 201);
+        }
     }
 }

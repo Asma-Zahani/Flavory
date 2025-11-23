@@ -2,6 +2,7 @@
 /* eslint-disable @next/next/no-img-element */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
+
 import { useState, useContext, useEffect, useRef } from "react";
 import Image from "next/image";
 import { CookingPot, Home, Menu, Plus, Search, UserRound, X } from "lucide-react";
@@ -51,7 +52,7 @@ export function Header() {
         <div className="mx-10 lg:mx-22">
           <div className="py-8 lg:border-b border-grayLight flex flex-col lg:flex-row justify-between">
             <div className="flex justify-between">
-              <Link href="/"><Image src="/logo.svg" alt="Flavory Logo" width={100} height={51} className="h-auto w-[200px]" priority /></Link>
+              <Link href="/"><Image src="/logo.svg" alt="Flavory Logo" width={100} height={51} className="h-auto w-[200px]"/></Link>
               <div className="lg:hidden flex items-center">
                 <button onClick={() => setMenuOpen(!menuOpen)}>
                   {menuOpen ? <X size={24} /> : <Menu size={24} />}

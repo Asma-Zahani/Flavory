@@ -30,7 +30,7 @@ export default function HomePage() {
         <div className="border border-primary flex flex-col items-center justify-center">
           <div className="flex items-center pt-25">
             <h2 className="font-dancing font-400 text-primary text-[40px] pr-6">Our newsletter</h2>
-            <Image src={"leafs/decorative_leaf_3.svg"} alt="" width={56} height={66} priority />
+            <Image src={"/leafs/decorative_leaf_3.svg"} alt="" width={56} height={66} />
           </div>
           <h3 className='text-center font-garamond text-[38px] font-500 leading-[1.1em] my-6 px-0 lg:px-[13%]'>Subscribe to our newsletter & keep up with our latest recipes and organized workshops.</h3>
           <form className="mt-4 flex items-center border-b border-grayDark w-[90%] md:w-[80%] lg:w-[60%] mb-25">
@@ -55,7 +55,7 @@ export default function HomePage() {
         <div className="border border-primary flex flex-col items-center justify-center">
           <div className="flex items-center pt-25">
             <h2 className="font-dancing font-400 text-primary text-[40px] pr-6">Our newsletter</h2>
-            <Image src={"leafs/decorative_leaf_3.svg"} alt="" width={56} height={66} priority />
+            <Image src={"/leafs/decorative_leaf_3.svg"} alt="" width={56} height={66} />
           </div>
           <h3 className='text-center font-garamond text-[38px] font-500 leading-[1.1em] my-6 px-0 lg:px-[13%]'>Subscribe to our newsletter & keep up with our latest recipes and organized workshops.</h3>
           <form className="mt-4 flex items-center border-b border-grayDark w-[90%] md:w-[80%] lg:w-[60%] mb-25">
@@ -71,7 +71,7 @@ export default function HomePage() {
       <div className="my-25">
         <h2 className="font-dancing font-400 text-primary text-[40px] mb-6">Easy ways to decorate a shrimp soup</h2>
         <div className="relative inline-block align-middle">
-          <Image src="/video-img.jpg" alt="" width={1500} height={366} priority />
+          <Image src="/video-img.jpg" alt="" width={1500} height={366} />
           <button onClick={() => setIsOpen(true)} className="absolute top-0 left-0 w-full h-full z-1 flex items-center justify-center leading-0.25 text-[106px]">
             <span className="block group">
               <svg className="transition-colors duration-300" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="72px" height="70px" viewBox="0 0 72 70" enableBackground="new 0 0 72 70">
@@ -110,7 +110,7 @@ export default function HomePage() {
         </div>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2">
           {[...Array(6)].map((_, index) => (
-            <Image key={index} src={`/share/insta-img${index + 1}.jpg`} alt="" width={300} height={300} priority /> 
+            <Image key={index} src={`/share/insta-img${index + 1}.jpg`} alt="" width={300} height={300} /> 
           ))}
         </div>
       </div>

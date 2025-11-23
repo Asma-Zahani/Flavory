@@ -9,7 +9,7 @@ export default function Sidebar() {
   return (
     <aside>
         <div className="relative">
-            <Image src="/workshop.jpg" alt="Workshop" width={900} height={1000} priority />
+            <Image src="/workshop.jpg" alt="Workshop" width={900} height={1000} />
             <div className="absolute top-0 left-0 w-full h-full">
                 <div className="flex flex-col items-start justify-end p-[30px]">
                 <h4 className="absolute text-3xl left-0 bottom-[21px] bg-white text-primary font-dancing px-[43px] pl-[39px] py-[9px] transform transition-transform duration-300 hover:-translate-x-3 cursor-pointer">
