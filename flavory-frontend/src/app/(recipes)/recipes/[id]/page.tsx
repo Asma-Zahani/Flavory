@@ -14,7 +14,7 @@ import { createEntity } from '@/services/EntitesService';
 import { UserContext } from '@/context/UserContext';
 import { SuccessMessageContext } from '@/context/SuccessMessageContext';
 import FileInput from '@/components/FileInput';
-import LoadingPage from '@/components/loading';
+import LoadingPage from '@/components/Loading';
 
 export default function RecipeDetail () {
     const {user, setUser} = useContext(UserContext);

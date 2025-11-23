@@ -4,6 +4,7 @@ import "../../globals.css";
 import { UserProvider } from "@/context/UserContext";
 import { SearchProvider } from "@/context/SearchContext";
 import { SuccessMessageProvider } from "@/context/SuccessMessageContext";
+import { LoadingProvider } from "@/context/LoadingContext";
 import { Footer, Header } from "../components/HeaderAndFooter";
 
 const raleway = Raleway({variable: "--font-raleway", subsets: ["latin"], weight: ["300", "400", "500", "600", "700"] });
@@ -21,15 +22,17 @@ export default function RootLayout({children}: Readonly<{ children: React.ReactN
   return (
     <html lang="en">
       <body className={`${raleway.variable} ${libre.variable} ${dancing.variable} ${greatvibes.variable} ${fredoka.variable} ${garamond.variable} ${allura.variable} ${poppins.variable} antialiased `} >
-        <SuccessMessageProvider>
-          <UserProvider>
-            <SearchProvider>
-              <Header />
-              <div className="mx-10 lg:mx-22">{children}</div>
-              <Footer />
-            </SearchProvider>
-          </UserProvider>
-        </SuccessMessageProvider>
+        <LoadingProvider>
+          <SuccessMessageProvider>
+            <UserProvider>
+              <SearchProvider>
+                <Header />
+                <div className="mx-10 lg:mx-22">{children}</div>
+                <Footer />
+              </SearchProvider>
+            </UserProvider>
+          </SuccessMessageProvider>
+        </LoadingProvider>
       </body>
     </html>
   );

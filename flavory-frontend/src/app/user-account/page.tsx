@@ -4,7 +4,7 @@ import { UserContext } from "@/context/UserContext";
 import { BookOpen, Heart, UserIcon } from "lucide-react";
 import { useContext } from "react";
 import UserAccountLayout from "./UserAccountLayout";
-import LoadingPage from "@/components/loading";
+import LoadingPage from "@/components/Loading";
 
 export default function UserAccountPage () {
     const {user} = useContext(UserContext);

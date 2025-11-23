@@ -15,13 +15,6 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const { setSuccessMessage } = useContext(SuccessMessageContext);
 
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      router.replace("/");
-    }
-  }, [router]);
-
   const handleChange = (e: { target: { name: string; value: string; }; }) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });

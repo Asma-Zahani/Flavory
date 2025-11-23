@@ -17,12 +17,5 @@ export function middleware(req: NextRequest) {
         return NextResponse.redirect(new URL("/login", req.url));
     }
 
-    const authBlockedPaths = ["/login", "/register"];
-    const isAuthBlocked = authBlockedPaths.some(path => pathname.startsWith(path));
-
-    if (token && isAuthBlocked) {
-        return NextResponse.redirect(new URL("/user-account", req.url));
-    }
-
     return NextResponse.next();
 }
