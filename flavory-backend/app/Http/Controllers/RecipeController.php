@@ -183,22 +183,38 @@ class RecipeController extends Controller implements HasMiddleware
 
         $recipe->update($validatedData);
 
-        $stepIds = [];
-
         DB::transaction(function() use ($recipe, $validatedData, &$stepIds) {
+            $ingredientKeys = []; 
             foreach ($validatedData['recipeIngredients'] as $ingredient) {
-                RecipeIngredient::updateOrCreate(
+                $ingredientKey = [
+                    'recipe_id' => $recipe->id,
+                    'ingredient_id' => $ingredient['ingredient']['id'],
+                    'type' => $ingredient['type'],
+                ];
+
+                DB::table('recipe_ingredients')->updateOrInsert(
+                    $ingredientKey,
                     [
-                        'recipe_id' => $recipe->id,
-                        'ingredient_id' => $ingredient['ingredient']['id'],
-                    ],
-                    [
-                        'type' => $ingredient['type'],
                         'quantity' => $ingredient['quantity'],
                         'unit' => $ingredient['unit'] ?? null,
                     ]
                 );
+
+                $ingredientKeys[] = $ingredientKey;
             }
+
+            RecipeIngredient::where('recipe_id', $recipe->id)
+                ->whereNot(function ($query) use ($ingredientKeys) {
+                    foreach ($ingredientKeys as $key) {
+                        $query->orWhere(function ($q) use ($key) {
+                            $q->where('ingredient_id', $key['ingredient_id'])
+                            ->where('type', $key['type']);
+                        });
+                    }
+                })
+                ->delete();
+            
+            $stepIds = [];
             foreach ($validatedData['recipeSteps'] as $step) {
                 $stepModel = Step::updateOrCreate(
                     [
@@ -213,6 +229,10 @@ class RecipeController extends Controller implements HasMiddleware
 
                 $stepIds[] = $stepModel->id;
             }
+
+            Step::where('recipe_id', $recipe->id)
+                ->whereNotIn('id', $stepIds)
+                ->delete();
         });
 
         return response()->json([

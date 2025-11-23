@@ -12,8 +12,9 @@ class RecipeIngredient extends Model
     use HasFactory;
 
     protected $table = 'recipe_ingredients';
-    protected $primaryKey = 'id';
     public $timestamps = false;
+    public $incrementing = false;
+    protected $keyType = 'string';
 
     protected $fillable = [
         'recipe_id',

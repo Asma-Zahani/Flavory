@@ -1,6 +1,3 @@
-recipe ingredient clé primaire composé ( recipe_id, ingredient_id, type)
-loading page 
-
-- Ils peuvent modifier ou supprimer leurs recettes. ✅ //si il y a un possibilité de rendre sauf le user dans le backend
+loading page
 
 - L’administrateur peut gérer les utilisateurs et supprimer les recettes ou commentaires inappropriés.
