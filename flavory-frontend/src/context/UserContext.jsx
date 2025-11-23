@@ -16,7 +16,10 @@ export const UserProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    if (token) getUser();
+    if (token) {
+      localStorage.setItem('token', token);
+      getUser();
+    }
   }, [token]);
 
   async function getUser() {

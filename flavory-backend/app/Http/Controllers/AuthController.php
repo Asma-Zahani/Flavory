@@ -42,10 +42,8 @@ class AuthController extends Controller
     {
         $validatedData = $request->validate([
             'email' => 'required|email|exists:users',
-            'password' => 'required',
-            'isChecked' => 'nullable|boolean',
+            'password' => 'required'
         ]);
-        
         $user = User::where('email', $validatedData['email'])->first();
 
         if (!$user || !Hash::check($validatedData['password'], $user->password)) {
@@ -55,21 +53,11 @@ class AuthController extends Controller
         if (!$user->email_verified_at) {
             return response()->json(['errors' => ['email' => ['Your email address has not been verified.']]], 403);
         }
-        $token = $user->createToken($user->prenom.' '.$user->nom);
-        
-        if ($validatedData['isChecked'] ?? null) {
-            $rememberToken = bin2hex(random_bytes(32));
-            $user->remember_token = $rememberToken;
-            $user->save();
 
-            return [
-                'user' => $user,
-                'token' => $token->plainTextToken,
-                'rememberToken' => $rememberToken
-            ];
-        }
+        $token = $user->createToken($user->prenom.' '.$user->nom)->plainTextToken;
         
-        return [ 'user' => $user, 'token' => $token->plainTextToken ];
+        // return [ 'user' => $user, 'token' => $token ];
+        return response()->json(['user' => $user, 'token' => $token])->cookie('token', $token, 60 * 24 * 7, '/', null, true, true, false, 'Lax');
     }
 
     public function verifyEmail(Request $request)

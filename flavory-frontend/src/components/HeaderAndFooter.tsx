@@ -118,13 +118,13 @@ export function Header() {
               <Link href="/recipes" className={`${(pathname === "/recipes" || pathname === "/recipe-category") ? 'text-primary' : 'text-gray'}`}>
                 <CookingPot />
               </Link>
-              <Link href={user ? "/add-recipe" : "/login"} className={`-mt-[50px] -mx-[20px] transition-all duration-700 ${showSticky ? "" : "translate-y-1/2"}`}>
+              <Link href="/add-recipe" className={`-mt-[50px] -mx-[20px] transition-all duration-700 ${showSticky ? "" : "translate-y-1/2"}`}>
                 <Plus strokeWidth={2} size={24} className="bg-primary text-white rounded-full h-15 w-15 p-3" />
               </Link>
-              <Link href="/search-recipes" className={`${pathname === "/search-recipes" ? 'text-primary' : 'text-gray'}`}>
+              <Link href="/recipes" className={`${pathname === "/search-recipes" ? 'text-primary' : 'text-gray'}`}>
                 <Search />
               </Link>
-              <Link href={user ? "/user-account" : "/login"} className={`${pathname === "/user-account" ? 'text-primary' : 'text-gray'}`}>
+              <Link href="/user-account" className={`${pathname === "/user-account" ? 'text-primary' : 'text-gray'}`}>
                 <UserRound />
               </Link>
             </div>

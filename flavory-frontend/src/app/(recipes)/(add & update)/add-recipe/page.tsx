@@ -110,8 +110,6 @@ export default function AddRecipePage () {
             router.push('/recipes'); 
         }   
     };
-    
-    if (!user) return;
 
     return (
         <div className='py-12 sm:py-20'>

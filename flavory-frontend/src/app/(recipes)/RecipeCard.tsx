@@ -28,8 +28,6 @@ export default function RecipeCard({ recipe, information }: RecipeCardProps) {
             setIsFavorite(favoriteExists);
         }
     }, [user, recipe]);
-
-    console.log(user);
     
     const toggleFavorite = async (e: React.MouseEvent) => {
         e.preventDefault();

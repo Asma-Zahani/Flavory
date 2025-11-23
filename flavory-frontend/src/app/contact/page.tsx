@@ -6,9 +6,6 @@ import { Mail, Facebook, Instagram } from "lucide-react";
 import { useState } from "react";
 
 export default function Contact() {
-  const [loading, setLoading] = useState(true);
-
-  if (loading) return <LoadingPage />;
 
   return (
     <main className="min-h-screen bg-white text-gray-800">

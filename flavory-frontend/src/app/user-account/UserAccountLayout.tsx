@@ -36,14 +36,6 @@ export default function UserAccountLayout({ children }: UserAccountPageProps) {
   const router = useRouter();
   const { setSuccessMessage } = useContext(SuccessMessageContext);
 
-  if (!user) {
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <p>Loading your account...</p>
-      </div>
-    );
-  }
-
   const handleLogout = async (e?: React.FormEvent) => {
     e?.preventDefault();
 
@@ -58,7 +50,7 @@ export default function UserAccountLayout({ children }: UserAccountPageProps) {
       router.push('/');
     }
   };
-
+  
   return (
     <div className="py-12 sm:py-20">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">

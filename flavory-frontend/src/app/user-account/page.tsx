@@ -4,18 +4,12 @@ import { UserContext } from "@/context/UserContext";
 import { BookOpen, Heart, UserIcon } from "lucide-react";
 import { useContext } from "react";
 import UserAccountLayout from "./UserAccountLayout";
+import LoadingPage from "@/components/loading";
 
 export default function UserAccountPage () {
     const {user} = useContext(UserContext);
-
-    if (!user) {
-        return (
-        <div className="flex items-center justify-center min-h-[400px]">
-            <p>Loading your account...</p>
-        </div>
-        );
-    } 
-
+    if (!user) return <LoadingPage />;
+    
     return (
         <UserAccountLayout>
             <div className="bg-gray-50 rounded-r-xl p-8 flex flex-col justify-center items-center min-h-[400px]">

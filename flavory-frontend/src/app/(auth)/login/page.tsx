@@ -44,9 +44,7 @@ export default function LoginPage() {
       const data = await res.json();
 
       if (res.ok) {
-        localStorage.setItem('token', data.token);
         setToken(data.token);
-        if (data.rememberToken) {localStorage.setItem('rememberToken', data.rememberToken)};
         router.push('/');
       } else {
         setError(data.message || "Login failed");
@@ -74,6 +72,7 @@ export default function LoginPage() {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({token: verifToken}),
+          credentials: "include",
         });
         const data = await res.json();
 
