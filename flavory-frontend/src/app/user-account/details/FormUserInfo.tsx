@@ -64,6 +64,8 @@ export default function FormUserInfo () {
         }   
     };
 
+    console.log(user);
+    
     return ( 
         <form className="w-full">
             <div className="flex flex-col sm:flex-row gap-x-3">

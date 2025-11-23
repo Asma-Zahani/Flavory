@@ -35,7 +35,13 @@ export default function RecipeForm ({formData, setFormData, recipeIngredients, s
     
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
-        setFormData((prev: any) => ({ ...prev, [name]: value }));
+        if(name === "numberPerson" || name === "cookingTime" || name === "fat" || name === "protein" || name === "carbs") {
+            if (/^\d*$/.test(value)) {
+                setFormData((prev: any) => ({ ...prev, [name]: value }));
+            }
+        } else {
+            setFormData((prev: any) => ({ ...prev, [name]: value }));
+        }
     };
 
     const handleAddIngredient = () => {
@@ -95,9 +101,11 @@ export default function RecipeForm ({formData, setFormData, recipeIngredients, s
                                     )}/>
 
                                 <input name="quantity" placeholder="Quantity*" value={ri.quantity} className='w-full lg:w-30 px-5 py-3 text-base placeholder:text-gray focus:text-black border border-grayDark rounded-none outline-none focus:border-black transition-colors duration-200 ease-out resize-none '
-                                    onChange={(e) => setRecipeIngredients((prev) => prev.map((ing, i) =>
-                                        i === index ? { ...ing, quantity: Number(e.target.value) } : ing
-                                    ))
+                                    onChange={(e) => {const onlyDigits = e.target.value.replace(/\D/g, ""); 
+                                        setRecipeIngredients((prev) => prev.map((ing, i) =>
+                                            i === index ? { ...ing, quantity: onlyDigits === "" ? 1 : Number(onlyDigits) } : ing
+                                        ))
+                                    }
                                 }/>
                                 <input name="unit" placeholder="Unit" value={ri.unit ?? ""} className='w-full lg:w-30 px-5 py-3 text-base placeholder:text-gray focus:text-black border border-grayDark rounded-none outline-none focus:border-black transition-colors duration-200 ease-out resize-none '
                                     onChange={(e) => setRecipeIngredients((prev) => prev.map((ing, i) =>

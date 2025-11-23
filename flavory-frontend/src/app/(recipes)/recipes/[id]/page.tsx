@@ -179,7 +179,11 @@ export default function RecipeDetail () {
 
                 <div className='flex'>
                     <div className='flex items-center pr-11 my-5'>
-                        <Image src={recipe.author.profile_photo ? `${process.env.NEXT_PUBLIC_BACKEND_URL}${recipe.author.profile_photo}` : 'user.jpg'} alt='' width={55} height={55} className='mr-6.5 rounded-full' />
+                        <div className="w-15 h-15 mx-auto mr-4 rounded-full overflow-hidden">
+                            <div className="w-full h-full bg-gray-200 flex items-center justify-center text-4xl">
+                                <Image src={recipe.author.profile_photo ? `${process.env.NEXT_PUBLIC_BACKEND_URL}${recipe.author.profile_photo}` : '/user.jpg'} alt='' width={100} height={100} />
+                            </div>
+                        </div>
                         <div className='flex flex-col'>
                             <a className='font-garamond font-500 text-xl'>{recipe.author.full_name}</a>
                             <p className='font-raleway text-gray text-[15px]'>{new Date(recipe.created_at).toLocaleDateString("en-US", {year: "numeric", month: "long", day: "numeric"})}</p>
