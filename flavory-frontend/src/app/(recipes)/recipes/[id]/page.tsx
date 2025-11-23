@@ -268,8 +268,8 @@ export default function RecipeDetail () {
 
                                     <table className="w-full mt-4 border-t border-b border-grayLight text-[15px] text-gray">
                                         <tbody>
-                                            {ingredientsByType.map((ri) => (
-                                                <IngredientRow key={ri.id} quantity={ri.quantity * servings} unit={ri.unit} name={ri.ingredient.name} />
+                                            {ingredientsByType.map((recipe_ingredient, index) => (
+                                                <IngredientRow key={index} quantity={recipe_ingredient.quantity * servings} unit={recipe_ingredient.unit} name={recipe_ingredient.ingredient.name} />
                                             ))}
                                         </tbody>
                                     </table>
