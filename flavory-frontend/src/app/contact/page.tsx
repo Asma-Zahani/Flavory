@@ -1,6 +1,15 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+"use client";
+
+import LoadingPage from "@/components/loading";
 import { Mail, Facebook, Instagram } from "lucide-react";
+import { useState } from "react";
 
 export default function Contact() {
+  const [loading, setLoading] = useState(true);
+
+  if (loading) return <LoadingPage />;
+
   return (
     <main className="min-h-screen bg-white text-gray-800">
       <section className="max-w-4xl mx-auto px-6 py-20">
