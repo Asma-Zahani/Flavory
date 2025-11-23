@@ -35,16 +35,20 @@ export default function UpdateRecipePage () {
             if (res.ok) {
                 const data = await res.json();
                 const { recipe_ingredients, steps, ...rest } = data;
-                setFormData(rest);
-                setRecipeIngredients(recipe_ingredients || []);
-                setRecipeSteps(steps || []);
-                setLoaded(true);
+                if (rest.author_id != user?.id) {
+                    router.push('/recipes');
+                } else {                    
+                    setFormData(rest);
+                    setRecipeIngredients(recipe_ingredients || []);
+                    setRecipeSteps(steps || []);
+                    setLoaded(true);
+                }
             };
             
         };
 
         if (recipeId) fetchRecipe();
-    }, [recipeId]);
+    }, [recipeId, router, user]);
 
     useEffect(() => {
         if (formData.fat && formData.protein && formData.carbs) {

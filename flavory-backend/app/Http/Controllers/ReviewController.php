@@ -3,11 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Review;
-use App\Models\ReviewImage;
-use GuzzleHttp\Middleware;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Support\Facades\Auth;
 
-class ReviewController extends Controller
+class ReviewController extends Controller implements HasMiddleware
 {
     public static function middleware()
     {
@@ -43,7 +44,11 @@ class ReviewController extends Controller
     public function update(Request $request, $id)
     {
         $review = Review::findOrFail($id);
-        
+
+        if ($request->user()->id !== $review->user_id) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
         $validatedData = $request->validate([
             'user_id' => 'required|integer|exists:users,id',
             'recipe_id' => 'required|integer|exists:recipes,id',
@@ -59,10 +64,16 @@ class ReviewController extends Controller
         ], 201);
     }
 
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
-        Review::findOrFail($id)->delete();
-
+        $review = Review::findOrFail($id);
+        
+        if ($request->user()->id !== $review->user_id) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+        
+        $review->delete();
+        
         return response()->json([
             'message' => 'Review deleted successfully'
         ], 200);

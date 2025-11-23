@@ -4,7 +4,8 @@ const getEntities = async (label) => {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
       Authorization: `Bearer ${localStorage.getItem("token")}`,
-    }
+    },
+    credentials: 'include'
   }); 
   
   return response;
@@ -16,7 +17,8 @@ const getEntity = async (label, _id) => {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
       Authorization: `Bearer ${localStorage.getItem("token")}`,
-    }
+    },
+    credentials: 'include'
   });
   return response;
 };
@@ -29,7 +31,8 @@ const createEntity = async (label, formData) => {
       'Accept': 'application/json',
       Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
-    body: JSON.stringify(formData)
+    body: JSON.stringify(formData),
+    credentials: 'include'
   });
 
   return response;
@@ -43,7 +46,8 @@ const updateEntity = async (label, _id, formData) => {
       'Accept': 'application/json',
       Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
-    body: JSON.stringify(formData)
+    body: JSON.stringify(formData),
+    credentials: 'include'
   });
 
   return response;
@@ -58,7 +62,8 @@ const deleteEntity = async (label, _id, formData) => {
       'Accept': 'application/json',
       Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
-    body: JSON.stringify(formData)
+    body: JSON.stringify(formData),
+    credentials: 'include'
   });
 
   return response;

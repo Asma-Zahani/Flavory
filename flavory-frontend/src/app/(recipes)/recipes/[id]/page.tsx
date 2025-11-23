@@ -135,7 +135,8 @@ export default function RecipeDetail () {
                         ...prevRecipe.reviews,
                         {
                             id: reviewId,
-                            user: user,          
+                            user: user,
+                            user_id: user.id,      
                             rating: formData.rating,
                             comment: formData.comment,
                             images: urls.map((url) => ({

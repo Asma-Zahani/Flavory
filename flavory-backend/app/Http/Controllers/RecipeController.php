@@ -8,7 +8,6 @@ use App\Enums\TypeRecipeIngredientEnum;
 use App\Models\Recipe;
 use App\Models\RecipeIngredient;
 use App\Models\Step;
-use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
@@ -151,6 +150,10 @@ class RecipeController extends Controller implements HasMiddleware
     {
         $recipe = Recipe::findOrFail($id);
 
+        if ($request->user()->id !== $recipe->author_id) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
         $validatedData = $request->validate([
             'author_id' => 'required|integer|exists:users,id',
             'title' => 'required|string|max:255',
@@ -220,9 +223,15 @@ class RecipeController extends Controller implements HasMiddleware
     }
 
 
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
-        Recipe::findOrFail($id)->delete();
+        $recipe = Recipe::findOrFail($id);
+        
+        if ($request->user()->id !== $recipe->author_id) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+        
+        $recipe->delete();
 
         return response()->json([
             'message' => 'Recipe deleted successfully'

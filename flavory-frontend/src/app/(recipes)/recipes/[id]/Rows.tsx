@@ -6,7 +6,6 @@ import { useContext, useEffect, useState } from "react";
 import RatingStars from "./RatingStars";
 import { deleteEntity, getEntity, updateEntity } from "@/services/EntitesService";
 import { UserContext } from "@/context/UserContext";
-import { useRouter } from "next/navigation";
 import { SuccessMessageContext } from "@/context/SuccessMessageContext";
 
 interface IngredientRowProps {
@@ -91,7 +90,6 @@ interface ReviewRowProps {
 
 export function ReviewRow({ review, setRecipe }: ReviewRowProps) {
   const {user} = useContext(UserContext);
-  const router = useRouter();
 
   const [showImages, setShowImages] = useState(false)
   const [open, setOpen] = useState(false);
@@ -110,8 +108,6 @@ export function ReviewRow({ review, setRecipe }: ReviewRowProps) {
     const data = await res.json();
 
     let urls: string[] = [];
-
-    console.log(formData.images);
     
     if (formData.images.length > 0) {
       const uploadPromises = formData.images.map(async (file, index) => {
@@ -191,7 +187,6 @@ export function ReviewRow({ review, setRecipe }: ReviewRowProps) {
       if (review.id && openUpdate) fetchRecipe();
   }, [review, openUpdate]);
 
-  
   return (
     <div className="py-4 relative border-b border-grayLight border-dashed">
       <div className="flex flex-col gap-2">
@@ -228,14 +223,15 @@ export function ReviewRow({ review, setRecipe }: ReviewRowProps) {
         </div>
       )}
       <div className="absolute right-2 bottom-2 flex gap-3 text-gray">
-        <div className="text-sm mt-0.5">
-          Helpful (0)
-        </div>
-        <button type="button" onClick={() => {if (!user) { router.push("/login")} else {setOpen(prev => !prev)};}}><EllipsisIcon /></button>
-        <div className={`absolute bottom-7 py-2 px-4 right-0 bg-white shadow-[0px_6px_24px_rgba(20,25,44,0.15)] z-50 transform transition-all duration-300 ease-in-out ${open ? "opacity-100 translate-y-0 visible" : "opacity-0 translate-y-3 invisible"} `}>
-          <span className="absolute -bottom-[5.5px] right-2 w-0 h-0 border-[6px] border-b-0 border-transparent border-t-white"></span>
-          <button type="button" onClick={() => {setOpen(false); setOpenUpdate(true)}} className="text-xs text-gray cursor-pointer hover:scale-105">Edit/Delete</button>
-        </div>
+        {(user && review.user_id == user.id) && 
+          <>
+            <button type="button" onClick={() => setOpen(prev => !prev)}><EllipsisIcon /></button>
+            <div className={`absolute bottom-7 py-2 px-4 right-0 bg-white shadow-[0px_6px_24px_rgba(20,25,44,0.15)] z-50 transform transition-all duration-300 ease-in-out ${open ? "opacity-100 translate-y-0 visible" : "opacity-0 translate-y-3 invisible"} `}>
+              <span className="absolute -bottom-[5.5px] right-2 w-0 h-0 border-[6px] border-b-0 border-transparent border-t-white"></span>
+              <button type="button" onClick={() => {setOpen(false); setOpenUpdate(true)}} className="text-xs text-gray cursor-pointer hover:scale-105">Edit/Delete</button>
+            </div>
+          </>
+        }
       </div>
       {openUpdate && 
         <div className='mt-10'>
