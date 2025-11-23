@@ -6,7 +6,7 @@ import { ChevronDownIcon, Plus, Trash2 } from "lucide-react";
 import { useContext, useEffect, useRef, useState } from "react";
 import {createEntity} from "@/services/EntitesService"
 import { SuccessMessageContext } from "@/context/SuccessMessageContext";
-import FileInput from "../components/FileInput";
+import FileInput from "@/components/FileInput";
 
 interface RecipeFormProps {formData: {author_id?: number, title: string, image: File[], description: string, category: string, cookingTime: string, difficulty: string, numberPerson: string, fat: string, protein: string, sugars: string, calories: string, carbs: string }; setFormData: React.Dispatch<React.SetStateAction<any>>; recipeIngredients: RecipeIngredient[]; setRecipeIngredients: React.Dispatch<React.SetStateAction<RecipeIngredient[]>>; recipeSteps: Steps[]; setRecipeSteps: React.Dispatch<React.SetStateAction<Steps[]>>;}
 interface DropdownInputProps {label?: string; name: string; value: string; placeholder?: string; options: { value: string; label: string }[]; onChange: (value: string) => void; onAdd?: (newName: string) => Promise<void>; width?: string;}
