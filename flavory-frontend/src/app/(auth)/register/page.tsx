@@ -12,7 +12,7 @@ export default function RegisterPage() {
   
   const [inputType, setInputType] = useState("password");
   const [inputType1, setInputType1] = useState("password");
-  const [formData, setFormData] = useState({ first_name: "", last_name: "", email: "", password: "", password_confirmation: "", images: [] as File[]});
+  const [formData, setFormData] = useState({ first_name: "", last_name: "", email: "", password: "", password_confirmation: "", image: [] as File[]});
   const [error, setError] = useState("");
   const { setSuccessMessage } = useContext(SuccessMessageContext);
   const [loading, setLoading] = useState(false);
@@ -41,19 +41,13 @@ export default function RegisterPage() {
     
     const userId = data.user_id;
     
-    if (formData.images.length > 0) {
-        const uploadPromises = formData.images.map(async (file) => {
-            const fd = new FormData();
-            fd.append("file", file);
-            fd.append("type", "user");
-            fd.append("user_id", userId.toString());
+    if (formData.image) {
+      const fd = new FormData();
+      fd.append("file", formData.image[0]);
+      fd.append("type", "user");
+      fd.append("user_id", userId.toString());
 
-            await fetch("/api/upload", { method: "POST", body: fd });
-        });
-
-        const uploadedUrls = await Promise.all(uploadPromises);
-
-        console.log("Uploaded URLs:", uploadedUrls);
+      await fetch("/api/upload", { method: "POST", body: fd });
     }
 
     setLoading(false);
