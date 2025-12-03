@@ -4,7 +4,7 @@ import { useState } from "react";
 import { UserContext } from "@/context/UserContext";
 import { useContext } from "react";
 import { updateEntity } from "@/services/EntitesService";
-import { SuccessMessageContext } from "@/context/SuccessMessageContext";
+import { MessageContext } from "@/context/MessageContext";
 import { useRouter } from "next/navigation";
 
 export default function FormUpdatePassword () {
@@ -17,7 +17,7 @@ export default function FormUpdatePassword () {
     const router = useRouter();
 
     const [loadingPassword, setLoadingPaddword] = useState(false);
-    const { setSuccessMessage } = useContext(SuccessMessageContext);
+    const { setMessage } = useContext(MessageContext);
 
 
     const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -34,7 +34,7 @@ export default function FormUpdatePassword () {
 
         setLoadingPaddword(false);
         if (res.ok) {
-            setSuccessMessage(data.message);
+            setMessage(data.message);
             router.push('/user-account'); 
             setFormDataPassword({ current_password: "", new_password: "", new_password_confirmation: "" });
         }   

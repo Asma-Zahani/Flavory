@@ -6,7 +6,7 @@ import { UserContext } from "@/context/UserContext";
 import { useContext } from "react";
 import FileInput from "@/components/FileInput";
 import { updateEntity } from "@/services/EntitesService";
-import { SuccessMessageContext } from "@/context/SuccessMessageContext";
+import { MessageContext } from "@/context/MessageContext";
 import { useRouter } from "next/navigation";
 
 export default function FormUserInfo () {
@@ -15,7 +15,7 @@ export default function FormUserInfo () {
     const [previewImages, setPreviewImages] = useState<string[]>(formData.image && formData.image.length > 0 ? [`${process.env.NEXT_PUBLIC_BACKEND_URL}${formData.image}`] : []);
 
     const router = useRouter();
-    const { setSuccessMessage } = useContext(SuccessMessageContext);
+    const { setMessage } = useContext(MessageContext);
 
     const [loadingInfo, setLoadingInfo] = useState(false);
 
@@ -51,7 +51,7 @@ export default function FormUserInfo () {
 
         setLoadingInfo(false);
         if (res.ok) {
-            setSuccessMessage(data.message);
+            setMessage(data.message);
             router.push('/user-account'); 
             setUser({
                 ...user,

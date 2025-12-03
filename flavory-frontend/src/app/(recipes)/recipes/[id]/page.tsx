@@ -12,13 +12,13 @@ import {IngredientRow, StepRow, ReviewRow} from './Rows';
 import RatingStars, { ReviewStars } from './RatingStars';
 import { createEntity } from '@/services/EntitesService';
 import { UserContext } from '@/context/UserContext';
-import { SuccessMessageContext } from '@/context/SuccessMessageContext';
+import { MessageContext } from '@/context/MessageContext';
 import FileInput from '@/components/FileInput';
 import LoadingPage from '@/components/Loading';
 
 export default function RecipeDetail () {
     const {user, setUser} = useContext(UserContext);
-    const { setSuccessMessage } = useContext(SuccessMessageContext);
+    const { setMessage } = useContext(MessageContext);
     const router = useRouter();
     const params = useParams<{ id: string }>();
     const id = params.id;
@@ -126,7 +126,7 @@ export default function RecipeDetail () {
         }
 
         if (res.ok) {
-            setSuccessMessage(data.message);
+            setMessage(data.message);
             setRecipe(prevRecipe => {
                 if (!prevRecipe) return prevRecipe;
 

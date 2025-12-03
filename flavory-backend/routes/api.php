@@ -18,6 +18,7 @@ Route::middleware(['auth:sanctum'])->get('user', function (Request $request) {
 Route::middleware(['auth:sanctum'])->get('recipeAdded', function (Request $request) {
     return (($request->user())->recipes()->paginate(4));
 });
+
 Route::get('enums', function () {
     $categories = array_map(fn($etat) => [
         'value' => $etat->value,
@@ -57,8 +58,8 @@ Route::post('favorite', [UserController::class, 'storeOrUpdateFavorite']);
 Route::post('/upload', [UploadController::class, 'store']);
 
 Route::put('/deleteImages/{type}/{id}', [UploadController::class, 'deleteImages']);
-Route::put('users/{id}', [UserController::class, 'update']);
 
+Route::apiResource('users', UserController::class);
 Route::apiResource('recipes', RecipeController::class);
 Route::apiResource('reviews', ReviewController::class);
 require __DIR__.'/auth.php';

@@ -3,18 +3,18 @@
 import { UserContext } from "@/context/UserContext";
 import { useContext } from "react";
 
-import UserAccountLayout from "../UserAccountLayout";
 import Link from "next/link";
 import { Recipe } from "@/types/recipe";
 import RecipeCard from "@/app/(recipes)/RecipeCard";
 import Image from "next/image";
+import DashboardLayout from "../../DashboardLayout";
 
 export default function FavoritePage () {
     const {user} = useContext(UserContext);
     const favorites = user?.favorites || [];
     
     return (
-        <UserAccountLayout>
+        <DashboardLayout>
             <div className="px-8 py-4 flex flex-col min-h-[400px]">
                 {favorites.length > 0 ? (
                     <>
@@ -43,6 +43,6 @@ export default function FavoritePage () {
                     </div>
                 )}
             </div>
-        </UserAccountLayout>
+        </DashboardLayout>
     );
 };

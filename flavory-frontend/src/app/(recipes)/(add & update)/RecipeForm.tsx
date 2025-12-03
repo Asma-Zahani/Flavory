@@ -5,7 +5,7 @@ import { Enums, Ingredient, RecipeIngredient, Steps } from "@/types/recipe";
 import { ChevronDownIcon, Plus, Trash2 } from "lucide-react";
 import { useContext, useEffect, useRef, useState } from "react";
 import {createEntity} from "@/services/EntitesService"
-import { SuccessMessageContext } from "@/context/SuccessMessageContext";
+import { MessageContext } from "@/context/MessageContext";
 import FileInput from "@/components/FileInput";
 
 interface RecipeFormProps {formData: {author_id?: number, title: string, image: File[], description: string, category: string, cookingTime: string, difficulty: string, numberPerson: string, fat: string, protein: string, sugars: string, calories: string, carbs: string }; setFormData: React.Dispatch<React.SetStateAction<any>>; recipeIngredients: RecipeIngredient[]; setRecipeIngredients: React.Dispatch<React.SetStateAction<RecipeIngredient[]>>; recipeSteps: Steps[]; setRecipeSteps: React.Dispatch<React.SetStateAction<Steps[]>>;}
@@ -25,7 +25,7 @@ export default function RecipeForm ({formData, setFormData, recipeIngredients, s
         )
     );
     const [data, setData] = useState<Enums>();
-    const { setSuccessMessage } = useContext(SuccessMessageContext);
+    const { setMessage } = useContext(MessageContext);
     
     
     useEffect(() => {
@@ -89,7 +89,7 @@ export default function RecipeForm ({formData, setFormData, recipeIngredients, s
                                     const res = await createEntity("ingredients", { name: newName });
                                     const data = await res.json();                                        
                                     setIngredients((prev) => [...prev, data.data]);
-                                    setSuccessMessage(data.message);
+                                    setMessage(data.message);
                                 }}/>
 
                             <div className="flex flex-row gap-3">

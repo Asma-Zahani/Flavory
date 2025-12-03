@@ -1,62 +1,50 @@
-import { Mail, Facebook, Instagram } from "lucide-react";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+"use client";
 
-export default function Contact() {
+import { Facebook, Instagram, Mail } from "lucide-react";
+import { useState } from "react";
+
+export default function ContactPage() {
+  const [formData, setFormData] = useState({name: "", email: "", message: ""});
+
+  const handleChange = (e: any) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
 
   return (
-    <main className="min-h-screen bg-white text-gray-800">
-      <section className="max-w-4xl mx-auto px-6 py-20">
-        <h1
-          className="text-4xl font-bold text-center mb-10 text-red-600"
-          data-aos="fade-down"
-        >
-          Contactez-nous
-        </h1>
-
-        <div
-          className="bg-gray-50 p-8 rounded-2xl shadow-lg space-y-6"
-          data-aos="zoom-in"
-        >
-          <p className="text-lg leading-relaxed">
-            Vous avez une question, une suggestion ou une idée d’amélioration
-            pour <span className="font-semibold">TuniCook</span> ? Nous serions
-            ravis d’échanger avec vous !
-          </p>
-
-          <div className="space-y-3" data-aos="fade-up" data-aos-delay="150">
-            <div className="flex items-center gap-3">
-              <Mail className="text-red-500" />
-              <span>contact@tunicook.com</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <Facebook className="text-blue-600" />
-              <a
-                href="https://facebook.com/tunicook"
-                className="hover:underline"
-              >
-                facebook.com/tunicook
-              </a>
-            </div>
-            <div className="flex items-center gap-3">
-              <Instagram className="text-pink-500" />
-              <a
-                href="https://instagram.com/tunicook"
-                className="hover:underline"
-              >
-                instagram.com/tunicook
-              </a>
-            </div>
-          </div>
-
-          <p
-            className="text-gray-600 italic mt-6"
-            data-aos="fade-up"
-            data-aos-delay="250"
-          >
-            N’hésitez pas à nous écrire pour toute demande de collaboration ou
-            simplement pour partager votre passion de la cuisine tunisienne 🍽️
-          </p>
+    <div className='py-12 sm:py-20'>
+      <h1 className='mb-14 font-500 font-garamond text-[52px] leading-[1.19em]'>Contact Us</h1>
+      <div className="flex flex-col lg:flex-row gap-10">
+        <div className="w-full lg:w-[70%]">
+            <input name="name" type="text" placeholder="Name*" value={formData.name} onChange={handleChange} className='w-full mb-5 px-5 py-3 text-base placeholder:text-gray focus:text-black border border-grayDark rounded-none outline-none focus:border-black transition-colors duration-200 ease-out resize-none '/>
+            <input name="email" type="email" placeholder="Email*" value={formData.email} onChange={handleChange} className='w-full mb-5 px-5 py-3 text-base placeholder:text-gray focus:text-black border border-grayDark rounded-none outline-none focus:border-black transition-colors duration-200 ease-out resize-none '/>
+            <textarea name="message" placeholder="Message*" value={formData.message} onChange={handleChange} className='w-full scrollbar h-33 mb-4 px-5 py-3 text-base placeholder:text-gray focus:text-black border border-grayDark rounded-none outline-none focus:border-black transition-colors duration-200 ease-out resize-none'/>
+            <button type="submit" className="relative inline-flex items-center font-raleway text-xs font-600 tracking-wider uppercase rounded-none outline-none transition-colors duration-200 ease-out px-14.5 py-4.5 cursor-pointer z-30 text-white bg-primary hover:scale-105 hover:font-bold">
+                Send Message
+            </button>
         </div>
-      </section>
-    </main>
+        <div className="w-full lg:w-[30%] space-y-6">
+          <div>
+            <h2 className="font-garamond text-3xl font-bold mb-2">Get in Touch</h2>
+            <p className="text-gray">
+              We&apos;d love to hear from you! Reach out if you have any questions, suggestions or feedback.
+            </p>
+          </div>
+          <div className="flex items-center gap-3">
+            <Mail className="w-6 h-6 text-primary" />
+            <span className="text-gray">flavory.app.contact@gmail.com</span>
+          </div>
+          <div className="flex items-center gap-3">
+            <Facebook className="w-6 h-6 text-primary" />
+            <a href="#" className="text-gray hover:underline">Flavory</a>
+          </div>
+          <div className="flex items-center gap-3">
+            <Instagram className="w-6 h-6 text-primary" />
+            <a href="#" className="text-gray hover:underline">@flavory_app</a>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }

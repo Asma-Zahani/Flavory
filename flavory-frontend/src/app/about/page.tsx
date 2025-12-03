@@ -7,16 +7,16 @@ export default function AboutPage() {
     return (
         <div className="py-12 sm:py-20 flex flex-col">
             <div>
-                <h1 data-aos="fade-down" data-aos-duration="580" data-aos-once="true" className="font-garamond font-500 text-[52px] leading-[1.2em] italic max-w-[80%] mb-10">Hello, It&apos;s Flavory. Welcome to recipes blog and food heaven!</h1>
+                <h1 className="font-garamond font-500 text-[52px] leading-[1.2em] max-w-[80%] mb-10">Hello, It&apos;s Flavory. Welcome to recipes blog and food heaven!</h1>
                 <Image src="/about-img.jpg" alt="" width={1500} height={366} />
-                <div data-aos="fade-up" data-aos-delay="100" className="text-gray my-6 text-lg leading-relaxed space-y-6">
+                <div className="text-gray my-6 text-lg leading-relaxed space-y-6">
                     <p>Welcome to <span className="font-semibold">Flavory</span>, your ultimate destination for discovering and sharing the authentic taste of Tunisia! We’re a vibrant community of food lovers, home cooks, and professional chefs passionate about celebrating the richness of Tunisian cuisine and culture.</p>
                     <p>Whether you’re here to explore traditional dishes, discover modern twists, or share your own creations,{" "} <span className="font-semibold">Flavory</span> {" "} brings everyone together around one table — full of flavor, color, and creativity. </p>
                 </div>
             </div>
-            <div data-aos="fade-up" data-aos-delay="200">
+            <div>
                 <h2 className="font-garamond font-500 text-[44px] leading-[1.09em] my-6">Where I find inspiration</h2>
-                <div data-aos="fade-up" data-aos-delay="100" className="my-6 text-gray text-lg leading-relaxed space-y-6">
+                <div className="my-6 text-gray text-lg leading-relaxed space-y-6">
                     <p>We believe that food is more than just nourishment — it&apos;s a way to connect, to remember, and to create joy. Each recipe tells a story, passed down from one generation to another, filled with the aromas of home and the warmth of shared moments.</p>
                     <p>From the golden couscous and spicy harissa to sweet makroud and comforting lablabi — our community celebrates every aspect of Tunisian gastronomy.</p>
                 </div>
@@ -29,7 +29,7 @@ export default function AboutPage() {
                 </ul>
             </div>
 
-            <div data-aos="zoom-in" className="relative w-full bg-beige bg-cover bg-center bg-no-repeat p-2 my-8" style={{ backgroundImage: "url('/pattern-new.png')" }}>
+            <div className="relative w-full bg-beige bg-cover bg-center bg-no-repeat p-2 my-8" style={{ backgroundImage: "url('/pattern-new.png')" }}>
                 <div className="border border-primary grid grid-cols-1 lg:grid-cols-2 items-center justify-center">
                     <div className="relative flex justify-center items-center mt-10 lg:mt-0">
                         <Image src={"leafs/decorative_leaf_2.svg"} alt="" width={120} height={150} className="hidden lg:flex" />
@@ -49,9 +49,9 @@ export default function AboutPage() {
                 </div>
             </div>
 
-            <div data-aos="fade-up" data-aos-delay="200">
+            <div>
                 <h2 className="font-garamond font-500 text-[44px] leading-[1.09em] my-6">Join Our Culinary Journey</h2>
-                <div data-aos="fade-up" data-aos-delay="100" className="my-6 text-gray text-lg leading-relaxed space-y-6">
+                <div className="my-6 text-gray text-lg leading-relaxed space-y-6">
                     <p>Our mission is to make Tunisian recipes accessible to everyone — whether you’re cooking for the first time or mastering your favorite classics. You can explore, save your favorite recipes, leave reviews, comment, and even publish your own creations.</p>
                     <p>Every contribution makes this community stronger, tastier, and more inspiring.</p>
                 </div>

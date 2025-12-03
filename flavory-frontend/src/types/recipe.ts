@@ -48,6 +48,8 @@ export interface User {
   id: number;
   full_name: string;
   profile_photo: string;
+  created_at: string;
+  email: string;
 }
 
 export interface Steps {

@@ -14,8 +14,18 @@ class UserController extends Controller implements HasMiddleware
     public static function middleware()
     {
         return [
-            new Middleware('auth:sanctum')
+            new Middleware('auth:sanctum', except:['index'])
         ];
+    }
+
+    public function index(Request $request)
+    {
+        $query = User::query();
+
+        $perPage = $request->get('per_page', 10);
+        $users = $query->paginate($perPage);
+        
+        return response()->json($users);
     }
 
     public function update(Request $request, $id)
@@ -46,7 +56,7 @@ class UserController extends Controller implements HasMiddleware
         ], 200);
     }
 
-        public function storeOrUpdateFavorite(Request $request)
+    public function storeOrUpdateFavorite(Request $request)
     {
         $validatedData = $request->validate([
             'user_id' => 'required|integer|exists:users,id',

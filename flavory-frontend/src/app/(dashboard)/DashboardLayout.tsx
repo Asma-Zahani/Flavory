@@ -4,11 +4,11 @@ import { UserContext } from "@/context/UserContext";
 import { ReactNode, useContext, useState } from "react";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
-import { BookOpen, Heart, Key, LayoutDashboard, LogOut } from "lucide-react";
+import { BookOpen, Heart, Key, LayoutDashboard, LogOut, Settings } from "lucide-react";
 import Link from "next/link";
 import Popup from "@/components/Popup";
 import { createEntity } from "@/services/EntitesService";
-import { SuccessMessageContext } from "@/context/SuccessMessageContext";
+import { MessageContext } from "@/context/MessageContext";
 import { useRouter } from "next/navigation";
 import LoadingPage from "@/components/Loading";
 
@@ -25,17 +25,17 @@ const navItems: NavItem[] = [
   { href: '/user-account/recipes', icon: <BookOpen className="w-5 h-5 ml-8" />, label: 'My Added Recipes' },
 ];
 
-interface UserAccountPageProps {
+interface DashboardPageProps {
   children: React.ReactNode;
 }
 
-export default function UserAccountLayout({ children }: UserAccountPageProps) {
+export default function DashboardLayout({ children }: DashboardPageProps) {
   const { user, setUser, setToken } = useContext(UserContext);
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
 
   const router = useRouter();
-  const { setSuccessMessage } = useContext(SuccessMessageContext);
+  const { setMessage } = useContext(MessageContext);
 
   const handleLogout = async (e?: React.FormEvent) => {
     e?.preventDefault();
@@ -47,7 +47,7 @@ export default function UserAccountLayout({ children }: UserAccountPageProps) {
       setUser(null);
       setToken(null);
       localStorage.removeItem("token");
-      setSuccessMessage(data.message);
+      setMessage(data.message);
       router.push('/');
     }
   };
@@ -57,14 +57,14 @@ export default function UserAccountLayout({ children }: UserAccountPageProps) {
   return (
     <div className="py-12 sm:py-20">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <aside className="p-6 bg-white lg:border-r border-grayLight shadow-lg md:shadow-none rounded-l-xl">
+        <aside className="p-6 bg-white lg:border-r border-grayLight shadow-lg md:shadow-none">
             <div className="text-center mb-10">
                 <div className="w-24 h-24 mx-auto mb-3 rounded-full overflow-hidden border-3 border-primary">
                     <div className="w-full h-full bg-gray-200 flex items-center justify-center text-4xl">
                         <Image src={user?.profile_photo ? `${process.env.NEXT_PUBLIC_BACKEND_URL}${user?.profile_photo}` : '/user.jpg'} alt='' width={100} height={100} />
                     </div>
                 </div>
-                <h3 className="text-xl font-bold text-gray-800">{user.full_name}</h3>
+                <h3 className="text-xl font-bold">{user.full_name}</h3>
                 <p className="text-sm text-gray-500">Member Since {new Date(user.created_at).toLocaleDateString("en-US", {year: "numeric", month: "short", day: undefined})}</p>
             </div>
 
@@ -72,12 +72,20 @@ export default function UserAccountLayout({ children }: UserAccountPageProps) {
                 <ul>
                   {navItems.map((item) => (
                       <li key={item.href} className="mb-2">
-                      <Link href={item.href} className={`flex items-center p-3 rounded-lg transition duration-200 ${pathname === item.href ? 'bg-primaryLight text-primary font-semibold border-l-4 border-primary' : 'text-gray'}`}>
-                          <span className="mr-3 text-lg">{item.icon}</span>
-                          {item.label}
-                      </Link>
+                        <Link href={item.href} className={`flex items-center p-3 rounded-lg transition duration-200 ${pathname === item.href ? 'bg-primaryLight text-primary font-semibold border-l-4 border-primary' : 'text-gray'}`}>
+                            <span className="mr-3 text-lg">{item.icon}</span>
+                            {item.label}
+                        </Link>
                       </li>
                   ))}
+                  {user.role === "admin" && 
+                    <li className="mb-2">
+                      <Link href="/administration" className={`flex items-center p-3 rounded-lg transition duration-200 ${pathname === "/administration" ? 'bg-primaryLight text-primary font-semibold border-l-4 border-primary' : 'text-gray'}`}>
+                        <span className="mr-3 text-lg"><Settings className="w-5 h-5 ml-8" /></span>
+                        Administration
+                      </Link>
+                    </li>
+                  }
                   <li className="mt-6 border-t border-grayLight pt-4">
                       <button onClick={() => {setIsOpen(true)}} className="flex items-center p-3 w-full text-left text-gray transition duration-200">
                           <LogOut className="w-5 h-5 me-3 ml-8" /> Logout

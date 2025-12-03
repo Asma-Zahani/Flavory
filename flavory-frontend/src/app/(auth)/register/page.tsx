@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import FileInput from "@/components/FileInput";
-import { SuccessMessageContext } from "@/context/SuccessMessageContext";
+import { MessageContext } from "@/context/MessageContext";
 import { createEntity } from "@/services/EntitesService";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -14,7 +14,7 @@ export default function RegisterPage() {
   const [inputType1, setInputType1] = useState("password");
   const [formData, setFormData] = useState({ first_name: "", last_name: "", email: "", password: "", password_confirmation: "", image: [] as File[]});
   const [error, setError] = useState("");
-  const { setSuccessMessage } = useContext(SuccessMessageContext);
+  const { setMessage } = useContext(MessageContext);
   const [loading, setLoading] = useState(false);
   const [previewImages, setPreviewImages] = useState<string[]>([]);
 
@@ -52,7 +52,7 @@ export default function RegisterPage() {
 
     setLoading(false);
     if (res.ok) {
-      setSuccessMessage(data.message);
+      setMessage(data.message);
       router.push('/login');
     } else {
       setError(data.message || "Register failed");

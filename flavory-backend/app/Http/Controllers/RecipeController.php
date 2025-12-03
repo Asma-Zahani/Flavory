@@ -42,9 +42,9 @@ class RecipeController extends Controller implements HasMiddleware
             });
         }
 
-        $recipes = $query->paginate(10);
-        // $recipes = $query->get();
-
+        $perPage = $request->get('per_page', 10);
+        $recipes = $query->paginate($perPage);
+        
         return response()->json($recipes);
     }
 

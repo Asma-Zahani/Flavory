@@ -6,7 +6,7 @@ import { useContext, useEffect, useState } from "react";
 import RatingStars from "./RatingStars";
 import { deleteEntity, getEntity, updateEntity } from "@/services/EntitesService";
 import { UserContext } from "@/context/UserContext";
-import { SuccessMessageContext } from "@/context/SuccessMessageContext";
+import { MessageContext } from "@/context/MessageContext";
 
 interface IngredientRowProps {
   quantity: number;
@@ -95,7 +95,7 @@ export function ReviewRow({ review, setRecipe }: ReviewRowProps) {
   const [open, setOpen] = useState(false);
   const [openUpdate, setOpenUpdate] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { setSuccessMessage } = useContext(SuccessMessageContext);
+  const { setMessage } = useContext(MessageContext);
 
   const [formData, setFormData] = useState({user_id: review.user_id, recipe_id: review.recipe_id, rating: 0, comment: "", images: [] as File[]});  
   const [previewImages, setPreviewImages] = useState<string[]>([]);
@@ -131,7 +131,7 @@ export function ReviewRow({ review, setRecipe }: ReviewRowProps) {
 
     setLoading(false);
     if (res.ok) {
-        setSuccessMessage(data.message);
+        setMessage(data.message);
         setRecipe(prev => {
           if (!prev) return prev;
 
@@ -162,7 +162,7 @@ export function ReviewRow({ review, setRecipe }: ReviewRowProps) {
     const res = await deleteEntity("reviews", review.id);
     const data = await res.json(); 
     if (res.ok) {
-        setSuccessMessage(data.message);
+        setMessage(data.message);
         setRecipe(prev => {
           if (!prev) return prev;
           return {
@@ -228,7 +228,7 @@ export function ReviewRow({ review, setRecipe }: ReviewRowProps) {
             <button type="button" onClick={() => setOpen(prev => !prev)}><EllipsisIcon /></button>
             <div className={`absolute bottom-7 py-2 px-4 right-0 bg-white shadow-[0px_6px_24px_rgba(20,25,44,0.15)] z-50 transform transition-all duration-300 ease-in-out ${open ? "opacity-100 translate-y-0 visible" : "opacity-0 translate-y-3 invisible"} `}>
               <span className="absolute -bottom-[5.5px] right-2 w-0 h-0 border-[6px] border-b-0 border-transparent border-t-white"></span>
-              <button type="button" onClick={() => {setOpen(false); setOpenUpdate(true)}} className="text-xs text-gray cursor-pointer hover:scale-105">Edit/Delete</button>
+              <button type="button" onClick={() => {setOpen(false); setOpenUpdate(!openUpdate)}} className="text-xs text-gray cursor-pointer hover:scale-105">{openUpdate ? "Cancel" : "Edit/Delete"}</button>
             </div>
           </>
         }

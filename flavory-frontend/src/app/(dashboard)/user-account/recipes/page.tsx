@@ -3,18 +3,18 @@
 import { UserContext } from "@/context/UserContext";
 import { useContext, useEffect, useState } from "react";
 
-import UserAccountLayout from "../UserAccountLayout";
 import Link from "next/link";
 import Image from "next/image";
 import AddedRecipesTable from "./AddedRecipesTable";
 import { deleteEntity, getEntities } from "@/services/EntitesService";
-import { SuccessMessageContext } from "@/context/SuccessMessageContext";
+import { MessageContext } from "@/context/MessageContext";
 import { Recipe } from "@/types/recipe";
 import Pagination from "@/components/Pagination";
+import DashboardLayout from "../../DashboardLayout";
 
 export default function FavoritePage () {
     const {user} = useContext(UserContext);
-    const { setSuccessMessage } = useContext(SuccessMessageContext);
+    const { setMessage } = useContext(MessageContext);
     
     const [recipes, setRecipes] = useState<Recipe[]>([]);
     const [page, setPage] = useState(1); 
@@ -45,7 +45,7 @@ export default function FavoritePage () {
         };
 
         fetchData();
-    }, [page, user]);
+    }, [page]);
 
     const handlePageChange = (newPage: number) => {
         setPage(newPage);
@@ -55,13 +55,13 @@ export default function FavoritePage () {
         const res = await deleteEntity("recipes", recipeId);
         const data = await res.json(); 
         if (res.ok) {
-            setSuccessMessage(data.message);
+            setMessage(data.message);
             setRecipes((prev: Recipe[]) => prev.filter(recipe => recipe.id !== recipeId));
         }   
     };
 
     return (
-        <UserAccountLayout>
+        <DashboardLayout>
             <div className="px-8 py-4 flex flex-col min-h-[400px]">
                 {recipes?.length > 0 ? (
                     <>
@@ -92,6 +92,6 @@ export default function FavoritePage () {
                     </div>
                 )}
             </div>
-        </UserAccountLayout>
+        </DashboardLayout>
     );
 };

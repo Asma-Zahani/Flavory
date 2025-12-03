@@ -5,14 +5,14 @@ import { RecipeIngredient, Steps } from "@/types/recipe";
 import { useContext, useEffect, useState } from "react";
 import {createEntity} from "@/services/EntitesService"
 import { UserContext } from "@/context/UserContext";
-import { SuccessMessageContext } from "@/context/SuccessMessageContext";
+import { MessageContext } from "@/context/MessageContext";
 import { useRouter } from "next/navigation";
 import RecipeForm from "../RecipeForm";
 
 export default function AddRecipePage () {
     const { user } = useContext(UserContext);
     const router = useRouter();
-    const { setSuccessMessage } = useContext(SuccessMessageContext);
+    const { setMessage } = useContext(MessageContext);
     const [loading, setLoading] = useState(false);
 
     const [formData, setFormData] = useState({author_id: user && user.id, title: "", image: [] as File[], description: "", category: "", cookingTime: "", difficulty: "",
@@ -106,7 +106,7 @@ export default function AddRecipePage () {
 
         setLoading(false);
         if (res.ok) {
-            setSuccessMessage(data.message);
+            setMessage(data.message);
             router.push('/recipes'); 
         }   
     };

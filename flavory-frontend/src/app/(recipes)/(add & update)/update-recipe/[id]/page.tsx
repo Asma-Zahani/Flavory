@@ -5,7 +5,7 @@ import { RecipeIngredient, Steps } from "@/types/recipe";
 import React, { useContext, useEffect, useState } from "react";
 import {updateEntity, getEntity, deleteEntity} from "@/services/EntitesService"
 import { UserContext } from "@/context/UserContext";
-import { SuccessMessageContext } from "@/context/SuccessMessageContext";
+import { MessageContext } from "@/context/MessageContext";
 import { useParams, useRouter } from "next/navigation";
 import Popup from "@/components/Popup";
 import { AlertCircle } from "lucide-react";
@@ -16,7 +16,7 @@ export default function UpdateRecipePage () {
     const router = useRouter();
     const params = useParams();
     const recipeId = params.id;
-    const { setSuccessMessage } = useContext(SuccessMessageContext);
+    const { setMessage } = useContext(MessageContext);
     const [loading, setLoading] = useState(false);
     const [load, setLoaded] = useState(false);
 
@@ -129,7 +129,7 @@ export default function UpdateRecipePage () {
 
         setLoading(false);
         if (res.ok) {
-            setSuccessMessage(data.message);
+            setMessage(data.message);
             router.push('/recipes'); 
         }   
     };
@@ -140,7 +140,7 @@ export default function UpdateRecipePage () {
         const res = await deleteEntity("recipes", recipeId);
         const data = await res.json(); 
         if (res.ok) {
-            setSuccessMessage(data.message);
+            setMessage(data.message);
             router.push('/recipes');
         }   
     };

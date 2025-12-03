@@ -1,5 +1,5 @@
 "use client";
-import { SuccessMessageContext } from "@/context/SuccessMessageContext";
+import { MessageContext } from "@/context/MessageContext";
 import { UserContext } from "@/context/UserContext";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -13,7 +13,7 @@ export default function LoginPage() {
   const [inputType, setInputType] = useState("password");
   const [formData, setFormData] = useState({email: "", password: "", isChecked: false}); 
   const [error, setError] = useState("");
-  const { setSuccessMessage } = useContext(SuccessMessageContext);
+  const { setMessage } = useContext(MessageContext);
 
   const handleChange = (e: { target: { name: string; value: string; }; }) => {
     const { name, value } = e.target;
@@ -70,7 +70,7 @@ export default function LoginPage() {
         const data = await res.json();
 
         if (data.message) {
-          setSuccessMessage(data.message);
+          setMessage(data.message);
           setVerifToken(null);
           const url = new URL(window.location.href);
           url.searchParams.delete("token");
@@ -82,7 +82,7 @@ export default function LoginPage() {
     };
 
     if (verifToken) fetchData();
-  }, [setSuccessMessage, verifToken]);
+  }, [setMessage, verifToken]);
 
   return (
     <div className="py-12 sm:py-20">

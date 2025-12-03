@@ -3,7 +3,7 @@ import { Raleway, Libre_Baskerville, Dancing_Script, Great_Vibes, Fredoka, EB_Ga
 import "../../globals.css";
 import { UserProvider } from "@/context/UserContext";
 import { SearchProvider } from "@/context/SearchContext";
-import { SuccessMessageProvider } from "@/context/SuccessMessageContext";
+import { MessageProvider } from "@/context/MessageContext";
 import { LoadingProvider } from "@/context/LoadingContext";
 import { Footer, Header } from "../components/HeaderAndFooter";
 
@@ -23,7 +23,7 @@ export default function RootLayout({children}: Readonly<{ children: React.ReactN
     <html lang="en">
       <body className={`${raleway.variable} ${libre.variable} ${dancing.variable} ${greatvibes.variable} ${fredoka.variable} ${garamond.variable} ${allura.variable} ${poppins.variable} antialiased `} >
         <LoadingProvider>
-          <SuccessMessageProvider>
+          <MessageProvider>
             <UserProvider>
               <SearchProvider>
                 <Header />
@@ -31,7 +31,7 @@ export default function RootLayout({children}: Readonly<{ children: React.ReactN
                 <Footer />
               </SearchProvider>
             </UserProvider>
-          </SuccessMessageProvider>
+          </MessageProvider>
         </LoadingProvider>
       </body>
     </html>
