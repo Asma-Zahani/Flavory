@@ -3,13 +3,19 @@
 import { UserContext } from "@/context/UserContext";
 import { BookOpen, Heart } from "lucide-react";
 import { useContext } from "react";
-import Loading from "../../../components/Loading";
 import Link from "next/link";
 import DashboardLayout from "../DashboardLayout";
 
 export default function UserAccountPage () {
     const {user} = useContext(UserContext);
-    if (!user) return <Loading />;
+    if (!user) return (
+        <div className="absolute inset-0 z-50 w-full h-full flex items-center justify-center bg-beige bg-cover bg-center bg-no-repeat" style={{ backgroundImage: "url('/spinner-background.png')" }}>
+            <div className="text-center">
+                <h2 className="font-allura font-400 text-6xl">Flavory</h2>
+                <h2 className="mt-2 font-poppins font-500 text-primary text-sm uppercase tracking-[0.3em]">crafted with Flavor</h2>
+            </div>
+        </div>
+    );
     
     return (
         <DashboardLayout>

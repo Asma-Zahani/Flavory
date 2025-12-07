@@ -14,7 +14,6 @@ import { createEntity } from '@/services/EntitesService';
 import { UserContext } from '@/context/UserContext';
 import { MessageContext } from '@/context/MessageContext';
 import FileInput from '@/components/FileInput';
-import Loading from '../../../../components/Loading';
 
 export default function RecipeDetail () {
     const {user, setUser} = useContext(UserContext);
@@ -153,7 +152,14 @@ export default function RecipeDetail () {
         }   
     };
     
-    if (!recipe) return <Loading />;
+    if (!recipe) return (
+        <div className="absolute inset-0 z-50 w-full h-full flex items-center justify-center bg-beige bg-cover bg-center bg-no-repeat" style={{ backgroundImage: "url('/spinner-background.png')" }}>
+            <div className="text-center">
+                <h2 className="font-allura font-400 text-6xl">Flavory</h2>
+                <h2 className="mt-2 font-poppins font-500 text-primary text-sm uppercase tracking-[0.3em]">crafted with Flavor</h2>
+            </div>
+        </div>
+    );
     
     return (
         <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 py-12 sm:py-20">
