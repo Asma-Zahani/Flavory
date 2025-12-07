@@ -10,7 +10,7 @@ import Popup from "@/components/Popup";
 import { createEntity } from "@/services/EntitesService";
 import { MessageContext } from "@/context/MessageContext";
 import { useRouter } from "next/navigation";
-import Loading from "@/components/Loading";
+import Loading from "../../components/Loading";
 
 interface NavItem {
   href: string;

@@ -3,7 +3,7 @@
 import { UserContext } from "@/context/UserContext";
 import { BookOpen, Heart } from "lucide-react";
 import { useContext } from "react";
-import Loading from "@/components/Loading";
+import Loading from "../../../components/Loading";
 import Link from "next/link";
 import DashboardLayout from "../DashboardLayout";
 
