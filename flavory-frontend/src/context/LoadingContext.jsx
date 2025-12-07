@@ -1,6 +1,5 @@
 "use client";
 
-import LoadingPage from "@/components/Loading";
 import { usePathname, useRouter } from "next/navigation";
 import { createContext, useEffect, useState } from "react";
 

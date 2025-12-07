@@ -3,13 +3,13 @@
 import { UserContext } from "@/context/UserContext";
 import { BookOpen, Heart } from "lucide-react";
 import { useContext } from "react";
-import LoadingPage from "@/components/Loading";
+import Loading from "@/components/Loading";
 import Link from "next/link";
 import DashboardLayout from "../DashboardLayout";
 
 export default function UserAccountPage () {
     const {user} = useContext(UserContext);
-    if (!user) return <LoadingPage />;
+    if (!user) return <Loading />;
     
     return (
         <DashboardLayout>

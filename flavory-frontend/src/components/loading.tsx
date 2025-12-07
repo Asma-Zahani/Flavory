@@ -1,6 +1,6 @@
 "use client";
 
-export default function LoadingPage() {
+export default function Loading() {
     return (
     <div className="absolute inset-0 z-50 w-full h-full flex items-center justify-center bg-beige bg-cover bg-center bg-no-repeat" style={{ backgroundImage: "url('/spinner-background.png')" }}>
       <div className="text-center">

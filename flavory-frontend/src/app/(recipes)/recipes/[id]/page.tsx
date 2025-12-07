@@ -14,7 +14,7 @@ import { createEntity } from '@/services/EntitesService';
 import { UserContext } from '@/context/UserContext';
 import { MessageContext } from '@/context/MessageContext';
 import FileInput from '@/components/FileInput';
-import LoadingPage from '@/components/Loading';
+import Loading from '@/components/Loading';
 
 export default function RecipeDetail () {
     const {user, setUser} = useContext(UserContext);
@@ -153,7 +153,7 @@ export default function RecipeDetail () {
         }   
     };
     
-    if (!recipe) return <LoadingPage />;
+    if (!recipe) return <Loading />;
     
     return (
         <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 py-12 sm:py-20">

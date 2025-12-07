@@ -10,7 +10,7 @@ import Popup from "@/components/Popup";
 import { createEntity } from "@/services/EntitesService";
 import { MessageContext } from "@/context/MessageContext";
 import { useRouter } from "next/navigation";
-import LoadingPage from "@/components/Loading";
+import Loading from "@/components/Loading";
 
 interface NavItem {
   href: string;
@@ -52,7 +52,7 @@ export default function DashboardLayout({ children }: DashboardPageProps) {
     }
   };
   
-  if (!user) return <LoadingPage />;
+  if (!user) return <Loading />;
 
   return (
     <div className="py-12 sm:py-20">
