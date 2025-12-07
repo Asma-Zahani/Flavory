@@ -1,5 +1,6 @@
 "use client";
 
+import Loading from "@/components/Loading";
 import { usePathname, useRouter } from "next/navigation";
 import { createContext, useEffect, useState } from "react";
 
@@ -31,7 +32,7 @@ export function LoadingProvider({ children }) {
 
   return (
     <LoadingContext.Provider value={{ loading, setLoading }}>
-      {loading && <LoadingPage />}
+      {loading && <Loading />}
       {!loading && children}
     </LoadingContext.Provider>
   );
